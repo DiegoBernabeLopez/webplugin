@@ -8,6 +8,26 @@ function update_server_status(){
 
 }
 
+
+function get_tree_image2(newick1, recipient1, newick2, recipient2){
+  var treeid1 = makeid();
+  $(recipient1).html('<div id="' + treeid1 + '">' + loading_img + '</div>');
+  //$(recipient).fadeTo(500, 0.2);
+  var params = {'newick':newick1, 'treeid':treeid1};
+  $('#'+treeid1).load(ete_webplugin_URL+'/get_tree_image', params,
+    function() {
+            $('#'+treeid1).fadeTo(100, 0.9);
+  });
+  var treeid2 = makeid();
+  $(recipient2).html('<div id="' + treeid2 + '">' + loading_img + '</div>');
+  //$(recipient).fadeTo(500, 0.2);
+  var params = {'newick':newick2, 'treeid':treeid2};
+  $('#'+treeid2).load(ete_webplugin_URL+'/get_tree_image', params,
+    function() {
+            $('#'+treeid2).fadeTo(100, 0.9);
+  });
+}
+
 function get_tree_image(newick, recipient){
   var treeid = makeid();
   $(recipient).html('<div id="' + treeid + '">' + loading_img + '</div>');

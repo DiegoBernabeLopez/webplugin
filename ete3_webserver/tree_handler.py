@@ -2,7 +2,7 @@ import time
 import string
 import random
 import logging as log
-from ete3 import PhyloTree, TreeStyle, NCBITaxa
+from ete3 import PhyloTree, TreeStyle, NCBITaxa, Tree
 from ete3.parser.newick import NewickError
 
 def timeit(f):

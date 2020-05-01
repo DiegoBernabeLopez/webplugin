@@ -31,7 +31,6 @@ class WebTreeHandler(object):
         self.tree.tree_style = style
         
         self.taxid = taxid
-        #print taxid
 
         self.treeid = tid
         self.mapid = "map_" + tid
@@ -41,6 +40,15 @@ class WebTreeHandler(object):
         for index, n in enumerate(self.tree.traverse('preorder')):
             n._nid = index
 
+    def diff(t1, t2, attr1, attr2, dist_fn=EUCL_DIST, reduce_matrix=False,extended=False, jobs=1):
+        # Then call real treediff function
+        result = treediff(t1, t2, attr1, attr2, dist_fn=EUCL_DIST, reduce_matrix=False,extended=False, jobs=1)
+        
+        # stuff to handle the result
+        # ....
+        # build dict linkind nodes from both trees to use later when calling actions
+        # return something that changes the image of the target tree to show the closest node with differences
+            
     @timeit
     def redraw(self):
         base64_img, img_map = self.tree.render("%%return.PNG", tree_style=self.tree.tree_style)

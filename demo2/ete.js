@@ -9,6 +9,21 @@ function update_server_status(){
 }
 
 
+function get_tree_diff(newick1, recipient1, newick2, recipient2){
+  var treeid1 = makeid();
+  $(recipient1).html('<div id="' + treeid1 + '">' + loading_img + '</div>'); //Loading gif
+  var treeid2 = makeid();
+  $(recipient2).html('<div id="' + treeid2 + '">' + loading_img + '</div>'); //Loading gif
+
+  var params = {'newick':newick1, 'treeid':treeid1,'newick2':newick2, 'treeid2':treeid2};
+    
+  $('#'+treeid1).load(ete_webplugin_URL+'/get_tree_diff', params,
+    function() {
+            $('#'+treeid1).fadeTo(100, 0.9);
+  });
+}
+
+
 function get_tree_image2(newick1, recipient1, newick2, recipient2){
   var treeid1 = makeid();
   $(recipient1).html('<div id="' + treeid1 + '">' + loading_img + '</div>');
@@ -18,6 +33,7 @@ function get_tree_image2(newick1, recipient1, newick2, recipient2){
     function() {
             $('#'+treeid1).fadeTo(100, 0.9);
   });
+    
   var treeid2 = makeid();
   $(recipient2).html('<div id="' + treeid2 + '">' + loading_img + '</div>');
   //$(recipient).fadeTo(500, 0.2);

@@ -80,10 +80,61 @@ def get_tree_image():
 
     h = TREE_HANDLER(newick, alg, taxid, treeid, DEFAULT_ACTIONS, DEFAULT_STYLE, PREDRAW_FN)
     LOADED_TREES[h.treeid] = h
+    
 
     # Renders initial tree
     img = h.redraw()
     return web_return(img, response)
+
+@post('/get_tree_diff')
+def get_tree_diff():
+    ''' Requires a POST param "newick" containing the tree to be loaded. '''
+
+    if request.json:
+        source_dict = request.json
+    else:
+        source_dict = request.POST
+        
+    
+    newick1 = source_dict.get('newick1', '').strip()
+    alg1 = source_dict.get('alg1', '').strip()
+    treeid1 = source_dict.get('treeid1', '').strip()
+    
+    taxid1 = source_dict.get('taxid1', '').strip()
+
+    if not newick1 or not treeid1:
+        return web_return('No source tree provided', response)
+
+
+    h1 = TREE_HANDLER(newick1, alg, taxid1, treeid1, DEFAULT_ACTIONS, DEFAULT_STYLE, PREDRAW_FN)
+    LOADED_TREES[h1.treeid] = h1
+    
+    
+    
+    newick2 = source_dict.get('newick2', '').strip()
+    alg2 = source_dict.get('alg2', '').strip()
+    treeid2 = source_dict.get('treeid2', '').strip()
+    
+    taxid2 = source_dict.get('taxid2', '').strip()
+
+    if not newick2 or not treeid1:
+        return web_return('No target tree provided', response)
+
+
+    h2 = TREE_HANDLER(newick2, alg2, taxid2, treeid2, DEFAULT_ACTIONS, DEFAULT_STYLE, PREDRAW_FN)
+    LOADED_TREES[h2.treeid] = h2
+    
+    
+    
+    # do ete diff stuff
+    # diffresult = h1.diff(h2)
+    # ....
+    
+    
+    # Renders initial tree
+    img = h.redraw()
+    return web_return(img, response)
+
 
 @post('/get_tree_from_paths')
 def get_tree_from_paths():

@@ -5,7 +5,7 @@
   border: 1px solid #777;
   margin: 0px;
   padding: 0px;
-  z-index:100;
+  z-index:110;
   }
 
 #popup ul
@@ -31,6 +31,7 @@
 {
   color: #565B53;
   text-decoration:none;
+  z-index:20;
 }
 
 #popup a:hover
@@ -101,7 +102,7 @@ cursor: auto;
 
 #tree_features_box{
 display:none;
-z-index:100;
+z-index:10;
 border: 1px dotted #555;
 text-align:left;
 background-color: #fff;
@@ -116,12 +117,13 @@ background-color: #fff;
 
 #highlighter {
   position: absolute;
-  visibility: visible;
+  visibility: hidden;
   z-index:100;
   top:0;
   left:0;
    width: 70px; height: 70px;
    border: 1px solid indianred;
+    pointer-events: none;
   }
 
 .ete_image1 {
@@ -145,7 +147,7 @@ background-color: #fff;
 }
 
 /* Clear floats after image containers */
-.row::after {
+#container::after {
   content: "";
   clear: both;
   display: table;

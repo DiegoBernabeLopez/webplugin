@@ -19,11 +19,24 @@ def show_action_change_style(node):
 def show_action_delete_node(node):
     return True
 
+def show_action_focus_node(node):
+    return True
+
+def show_action_close_popup(node):
+    return True
+
 ##
 # Run actions
 
 def run_action_root(tree, node, taxid):
     tree.set_outgroup(node)
+    return
+
+def run_action_focus_node(tree, node, taxid):
+    tree = node
+    return
+
+def run_action_close_popup(tree, node, taxid):
     return
     
 def toggle_highlight_node(node, prev_highlighted):
@@ -132,5 +145,7 @@ actions.add_action('Root here', show_action_root, run_action_root)
 actions.add_action('Highlight', show_action_highlight, run_action_highlight)
 actions.add_action('Change style', show_action_change_style, run_action_change_style)
 actions.add_action('Delete node', show_action_delete_node, run_action_delete_node)
+actions.add_action('Focus on node', show_action_focus_node, run_action_focus_node)
+actions.add_action('Close', show_action_close_popup, run_action_close_popup)
 
 start_server(node_actions=actions, tree_style=ts)

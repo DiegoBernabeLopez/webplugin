@@ -1,6 +1,5 @@
 import gzip
 import logging as log
-#from StringIO import StringIO
 from io import StringIO, BytesIO
 from bottle import (run, get, post, request, route, response, abort, hook,
                     error, HTTPResponse, static_file)
@@ -16,7 +15,6 @@ TREE_HANDLER = WebTreeHandler
 
 def web_return(html, response):
     if COMPRESS_DATA and len(html) >= COMPRESS_MIN_BYTES:
-        #chtmlF = StringIO()
         chtmlF = BytesIO()
         z = gzip.GzipFile(fileobj=chtmlF, mode='w')
         
@@ -106,7 +104,7 @@ def get_tree_diff():
         return web_return('No source tree provided', response)
 
 
-    h1 = TREE_HANDLER(newick1, alg, taxid1, treeid1, DEFAULT_ACTIONS, DEFAULT_STYLE, PREDRAW_FN)
+    h1 = TREE_HANDLER(newick1, alg1, taxid1, treeid1, DEFAULT_ACTIONS, DEFAULT_STYLE, PREDRAW_FN)
     LOADED_TREES[h1.treeid] = h1
     
     
@@ -117,7 +115,7 @@ def get_tree_diff():
     
     taxid2 = source_dict.get('taxid2', '').strip()
 
-    if not newick2 or not treeid1:
+    if not newick2 or not treeid2:
         return web_return('No target tree provided', response)
 
 
@@ -132,8 +130,9 @@ def get_tree_diff():
     
     
     # Renders initial tree
-    img = h.redraw()
-    return web_return(img, response)
+    img1 = h1.redraw()
+    #img2 = h2.redraw()
+    return web_return(img1, response)#, web_return(img1, response)
 
 
 @post('/get_tree_from_paths')
@@ -158,9 +157,9 @@ def get_tree_from_paths():
     if not tree or not treeid:
         return web_return('No tree provided', response)
 
-    ########################################
-    taxid = 0 # Is it really need it taxid??
-    ########################################
+    
+    taxid = 0
+    
     
     h = TREE_HANDLER(tree, alg, taxid, treeid, DEFAULT_ACTIONS, DEFAULT_STYLE, PREDRAW_FN)
     LOADED_TREES[h.treeid] = h

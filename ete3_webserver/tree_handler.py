@@ -4,6 +4,7 @@ import random
 import logging as log
 from ete3 import PhyloTree, TreeStyle, NCBITaxa, Tree
 from ete3.parser.newick import NewickError
+from ete3.tools.ete_diff import treediff, EUCL_DIST
 
 def timeit(f):
     def a_wrapper_accepting_arguments(*args, **kargs):
@@ -25,6 +26,8 @@ class WebTreeHandler(object):
         except NewickError:
             self.tree = Tree(newick, format=1)
             
+        self.diffdict = {}
+            
         if predraw_fn:
             predraw_fn(self.tree)
         self.tree.actions = actions
@@ -40,14 +43,11 @@ class WebTreeHandler(object):
         for index, n in enumerate(self.tree.traverse('preorder')):
             n._nid = index
 
-    def diff(t1, t2, attr1, attr2, dist_fn=EUCL_DIST, reduce_matrix=False,extended=False, jobs=1):
-        # Then call real treediff function
-        result = treediff(t1, t2, attr1, attr2, dist_fn=EUCL_DIST, reduce_matrix=False,extended=False, jobs=1)
+    def diff(self, t2, attr1 = 'name', attr2 = 'name', dist_fn=EUCL_DIST, reduce_matrix=False,extended=False, jobs=1):
+
+        result = treediff(self, t2, attr1, attr2, dist_fn=EUCL_DIST, reduce_matrix=False,extended=False, jobs=1)
         
-        # stuff to handle the result
-        # ....
-        # build dict linkind nodes from both trees to use later when calling actions
-        # return something that changes the image of the target tree to show the closest node with differences
+        self.diffdict = {r[-2] : {'target':r[-1], 'diff1' : r[2], 'diff2' : r[3]} for r in result}
             
     @timeit
     def redraw(self):

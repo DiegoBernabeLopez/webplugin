@@ -26,7 +26,9 @@ class WebTreeHandler(object):
         except NewickError:
             self.tree = Tree(newick, format=1)
             
-        self.diffdict = {}
+        self.diffdict = dict()
+        self.diffdict['nodes'] = dict()
+        self.diffdict['target'] = ''
             
         if predraw_fn:
             predraw_fn(self.tree)
@@ -42,19 +44,29 @@ class WebTreeHandler(object):
         # Initialze node internal IDs
         for index, n in enumerate(self.tree.traverse('preorder')):
             n._nid = index
+            self.diffdict['nodes'][n._nid] = {'target_nodeid' : -1, 'diff1' : None, 'diff2' : None}
 
-    def diff(self, t2, attr1 = 'name', attr2 = 'name', dist_fn=EUCL_DIST, reduce_matrix=False,extended=False, jobs=1):
+    def diff(self, ht, attr1 = 'name', attr2 = 'name', dist_fn=EUCL_DIST, reduce_matrix=False,extended=False, jobs=1):
 
-        result = treediff(self, t2, attr1, attr2, dist_fn=EUCL_DIST, reduce_matrix=False,extended=False, jobs=1)
+        result = treediff(self.tree, ht.tree, attr1 = 'name', attr2 = 'name', dist_fn=EUCL_DIST, reduce_matrix=False,extended=False, jobs=1)
         
-        self.diffdict = {r[-2] : {'target':r[-1], 'diff1' : r[2], 'diff2' : r[3]} for r in result}
+        for r in result:
+            node = self.tree.search_nodes(name=r[-2].name)[0]
+            target = ht.tree.search_nodes(name=r[-1].name)[0]
+            diff1 = r[2]
+            diff2 = r[3]
             
+            self.diffdict['nodes'][node._nid] = {'target_nodeid' : target._nid, 'diff1' : diff1, 'diff2' : diff2} 
+            self.diffdict['target'] = ht
+            
+                    
     @timeit
     def redraw(self):
         base64_img, img_map = self.tree.render("%%return.PNG", tree_style=self.tree.tree_style)
+        _, target_map = self.diffdict['target'].tree.render("%%return.PNG", tree_style=self.tree.tree_style)
         base64_img = base64_img.data().decode("utf-8")
         
-        html_map = self.get_html_map(img_map)
+        html_map = self.get_html_map(img_map,target_map)
 
         html_img = """<img id="%s" class="ete_tree_img" USEMAP="#%s" onLoad="javascript:bind_popup();" src="data:image/gif;base64,%s">""" %(self.imgid, self.mapid, base64_img)
         ete_link = '<div style="margin:0px;padding:0px;text-align:left;"><a href="http://etetoolkit.org" style="font-size:7pt;" target="_blank" >Powered by etetoolkit</a></div>'
@@ -62,33 +74,37 @@ class WebTreeHandler(object):
         tree_div_id = self.boxid
         return html_map+ '<div id="%s" >'%tree_div_id + html_img + ete_link + "</div>"
 
-    def get_html_map(self, img_map):
+    def get_html_map(self, img_map, target_map):
+        
         html_map = '<MAP NAME="%s" class="ete_tree_img">' %(self.mapid)
         if img_map["nodes"]:
             for x1, y1, x2, y2, nodeid, text in img_map["nodes"]:
+                
                 text = "" if not text else text
                 area = img_map["node_areas"].get(int(nodeid), [0,0,0,0])
+                area2 = target_map["node_areas"].get(int(self.diffdict['nodes'][nodeid]['target_nodeid']), [0,0,0,0])
                 html_map += """ <AREA SHAPE="rect" COORDS="%s,%s,%s,%s" 
                                 onMouseOut='unhighlight_node();'
-                                onMouseOver='highlight_node("%s", "%s", "%s", %s, %s, %s, %s);'
+                                onMouseOver='highlight_node("%s", "%s", "%s", "%s", "%s", %s, %s, %s, %s, %s, %s, %s, %s);'
                                 onClick='show_actions("%s", "%s");'
                                 href="javascript:void('%s');">""" %\
-                    (int(x1), int(y1), int(x2), int(y2),
-                     self.treeid, nodeid, text, area[0], area[1], area[2]-area[0], area[3]-area[1],
-                     self.treeid, nodeid,
-                     nodeid)
+                    (int(x1), int(y1), int(x2), int(y2), # coords
+                     self.treeid, self.diffdict['target'].treeid, nodeid, self.diffdict['nodes'][nodeid]['target_nodeid'], text, area[0], area[1], area[2]-area[0], area[3]-area[1], area2[0], area2[1], area2[2]-area2[0], area2[3]-area2[1], # highlight_node
+                     self.treeid, nodeid, # show_actions
+                     nodeid) # javascript:void
 
         if img_map["faces"]:
             for x1, y1, x2, y2, nodeid, text in img_map["faces"]:
                 text = "" if not text else text
                 area = img_map["node_areas"].get(int(nodeid), [0,0,0,0])
+                area2 = target_map["node_areas"].get(int(self.diffdict['nodes'][nodeid]['target_nodeid']), [0,0,0,0])
                 html_map += """ <AREA SHAPE="rect" COORDS="%s,%s,%s,%s"
                                 onMouseOut='unhighlight_node();'
-                                onMouseOver='highlight_node("%s", "%s", "%s", %s, %s, %s, %s);'
+                                onMouseOver='highlight_node("%s", "%s", "%s", "%s", "%s", %s, %s, %s, %s, %s, %s, %s, %s);'
                                 onClick='show_actions("%s", "%s", "%s");'
                                 href='javascript:void("%s");'>""" %\
                     (int(x1),int(y1),int(x2),int(y2),
-                     self.treeid, nodeid, text, area[0], area[1], area[2]-area[0], area[3]-area[1],
+                     self.treeid, self.diffdict['target'].treeid, nodeid, self.diffdict['nodes'][nodeid]['target_nodeid'], text, area[0], area[1], area[2]-area[0], area[3]-area[1], area2[0], area2[1], area2[2]-area2[0], area2[3]-area2[1],
                      self.treeid, nodeid, text,
                      text,
                      )

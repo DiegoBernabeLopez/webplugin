@@ -115,7 +115,18 @@ text-align:center;
 background-color: #fff;
 }
 
-#highlighter {
+#highlighter1 {
+  position: absolute;
+  visibility: hidden;
+  z-index:100;
+  top:0;
+  left:0;
+   width: 70px; height: 70px;
+   border: 1px solid indianred;
+    pointer-events: none;
+  }
+
+#highlighter2 {
   position: absolute;
   visibility: hidden;
   z-index:100;
@@ -139,6 +150,13 @@ background-color: #fff;
   left: 16px;
   font-size: 18px;
 }
+
+/* #ete_tree_img {
+  position: relative;
+  top: 500px;
+  left: 160px;
+  font-size: 18px;
+} */
 
 .column {
   float: left;

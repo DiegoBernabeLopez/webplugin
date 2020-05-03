@@ -56,36 +56,36 @@ def server_status():
     return web_return('alive', response)
 
 # WEB API FUNCTIONALITY
-@post('/get_tree_image')
-def get_tree_image():
-    ''' Requires a POST param "newick" containing the tree to be loaded. '''
+# @post('/get_tree_image')
+# def get_tree_image():
+#     ''' Requires a POST param "newick" containing the tree to be loaded. '''
 
-    if request.json:
-        source_dict = request.json
-    else:
-        source_dict = request.POST
+#     if request.json:
+#         source_dict = request.json
+#     else:
+#         source_dict = request.POST
         
     
-    newick = source_dict.get('newick', '').strip()
-    alg = source_dict.get('alg', '').strip()
-    treeid = source_dict.get('treeid', '').strip()
+#     newick = source_dict.get('newick', '').strip()
+#     alg = source_dict.get('alg', '').strip()
+#     treeid = source_dict.get('treeid', '').strip()
     
-    taxid = source_dict.get('taxid', '').strip()
+#     taxid = source_dict.get('taxid', '').strip()
 
-    if not newick or not treeid:
-        return web_return('No tree provided', response)
+#     if not newick or not treeid:
+#         return web_return('No tree provided', response)
 
 
-    h = TREE_HANDLER(newick, alg, taxid, treeid, DEFAULT_ACTIONS, DEFAULT_STYLE, PREDRAW_FN)
-    LOADED_TREES[h.treeid] = h
+#     h = TREE_HANDLER(newick, alg, taxid, treeid, DEFAULT_ACTIONS, DEFAULT_STYLE, PREDRAW_FN)
+#     LOADED_TREES[h.treeid] = h
     
 
-    # Renders initial tree
-    img = h.redraw()
-    return web_return(img, response)
+#     # Renders initial tree
+#     img = h.redraw()
+#     return web_return(img, response)
 
-@post('/get_tree_diff')
-def get_tree_diff():
+@post('/load_trees')
+def load_trees():
     ''' Requires a POST param "newick" containing the tree to be loaded. '''
 
     if request.json:
@@ -125,48 +125,28 @@ def get_tree_diff():
     
     
     # do ete diff stuff
-    # diffresult = h1.diff(h2)
-    # ....
+    h1.diff(h2)
+    h2.diff(h1)
     
     
     # Renders initial tree
-    img1 = h1.redraw()
+#     img1 = h1.redraw()
     #img2 = h2.redraw()
-    return web_return(img1, response)#, web_return(img1, response)
+#     return web_return(img1, response)#, web_return(img1, response)
 
-
-@post('/get_tree_from_paths')
-def get_tree_from_paths():
-    ''' Requires the next POST params:
-    - gene: gene name
-    - treeid: identifier for the new tree to be drawn
-    - tree: path to the tree file which contains the newick formatted tree
-    - alg: path to the alignment (MSA) file
-    '''
-
+@post('/draw_tree')
+def draw_tree():
     if request.json:
         source_dict = request.json
     else:
         source_dict = request.POST
-
-    gene = source_dict.get('gene', '').strip()
+        
     treeid = source_dict.get('treeid', '').strip()
-    tree = source_dict.get('tree', '').strip()
-    alg = source_dict.get('alg', '').strip()
 
-    if not tree or not treeid:
-        return web_return('No tree provided', response)
+    if treeid:
+        h = LOADED_TREES[treeid]
+        img = h.redraw()
 
-    
-    taxid = 0
-    
-    
-    h = TREE_HANDLER(tree, alg, taxid, treeid, DEFAULT_ACTIONS, DEFAULT_STYLE, PREDRAW_FN)
-    LOADED_TREES[h.treeid] = h
-
-    # Renders initial tree
-    img = h.redraw()
-    
     return web_return(img, response)
 
 @post('/get_actions')
@@ -204,6 +184,8 @@ def run_action():
         img = h.redraw()
 
     return web_return(img, response)
+
+
 
 DEFAULT_ACTIONS = None
 DEFAULT_STYLE = None

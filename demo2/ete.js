@@ -15,47 +15,72 @@ function get_tree_diff(newick1, recipient1, newick2, recipient2){
   var treeid2 = makeid();
   $(recipient2).html('<div id="' + treeid2 + '">' + loading_img + '</div>'); //Loading gif
 
+    
+  // Get trees from text
   var params = {'newick1':newick1, 'treeid1':treeid1,'newick2':newick2, 'treeid2':treeid2};
     
-  $('#'+treeid1).load(ete_webplugin_URL+'/get_tree_diff', params,
-    function() {
-            $('#'+treeid1).fadeTo(100, 0.9);
-  });
-}
-
-
-function get_tree_image2(newick1, recipient1, newick2, recipient2){
-  var treeid1 = makeid();
-  $(recipient1).html('<div id="' + treeid1 + '">' + loading_img + '</div>');
-  //$(recipient).fadeTo(500, 0.2);
-  var params = {'newick':newick1, 'treeid':treeid1};
-  $('#'+treeid1).load(ete_webplugin_URL+'/get_tree_image', params,
+  $('#'+treeid1).load(ete_webplugin_URL+'/load_trees', params,
     function() {
             $('#'+treeid1).fadeTo(100, 0.9);
   });
     
-  var treeid2 = makeid();
-  $(recipient2).html('<div id="' + treeid2 + '">' + loading_img + '</div>');
-  //$(recipient).fadeTo(500, 0.2);
-  var params = {'newick':newick2, 'treeid':treeid2};
-  $('#'+treeid2).load(ete_webplugin_URL+'/get_tree_image', params,
+  // Draw trees
+  var params = {"treeid": treeid1};
+  $('#'+treeid1).load(ete_webplugin_URL+'/draw_tree', params,
+    function() {
+            $('#'+treeid1).fadeTo(100, 0.9);
+  });
+    
+  var params = {"treeid": treeid2};
+  $('#'+treeid2).load(ete_webplugin_URL+'/draw_tree', params,
     function() {
             $('#'+treeid2).fadeTo(100, 0.9);
   });
 }
 
-function get_tree_image(newick, recipient){
-  var treeid = makeid();
-  $(recipient).html('<div id="' + treeid + '">' + loading_img + '</div>');
-  //$(recipient).fadeTo(500, 0.2);
-  var params = {'newick':newick, 'treeid':treeid};
-  $('#'+treeid).load(ete_webplugin_URL+'/get_tree_image', params,
+
+// function get_tree_image2(newick1, recipient1, newick2, recipient2){
+//   var treeid1 = makeid();
+//   $(recipient1).html('<div id="' + treeid1 + '">' + loading_img + '</div>');
+//   //$(recipient).fadeTo(500, 0.2);
+//   var params = {'newick':newick1, 'treeid':treeid1};
+//   $('#'+treeid1).load(ete_webplugin_URL+'/get_tree_image', params,
+//     function() {
+//             $('#'+treeid1).fadeTo(100, 0.9);
+//   });
+    
+//   var treeid2 = makeid();
+//   $(recipient2).html('<div id="' + treeid2 + '">' + loading_img + '</div>');
+//   //$(recipient).fadeTo(500, 0.2);
+//   var params = {'newick':newick2, 'treeid':treeid2};
+//   $('#'+treeid2).load(ete_webplugin_URL+'/get_tree_image', params,
+//     function() {
+//             $('#'+treeid2).fadeTo(100, 0.9);
+//   });
+// }
+
+// function get_tree_image(newick, recipient){
+//   var treeid = makeid();
+//   $(recipient).html('<div id="' + treeid + '">' + loading_img + '</div>');
+//   //$(recipient).fadeTo(500, 0.2);
+//   var params = {'newick':newick, 'treeid':treeid};
+//   $('#'+treeid).load(ete_webplugin_URL+'/get_tree_image', params,
+//     function() {
+//             $('#'+treeid).fadeTo(100, 0.9);
+//   });
+// }
+
+function run_action(treeid, nodeid, faceid, aindex){
+  $("#popup").hide();
+  $('#'+treeid).html(loading_img);
+  console.log(treeid, nodeid, faceid, aindex, $('#'+treeid));
+  var params = {"treeid": treeid, "nodeid": nodeid, "faceid": faceid, "aindex":aindex};
+  $('#'+treeid).load(ete_webplugin_URL+'/run_action', params,
     function() {
+      console.log('run action');
             $('#'+treeid).fadeTo(100, 0.9);
   });
 }
-
-
 
 
 
@@ -82,7 +107,6 @@ function run_action(treeid, nodeid, faceid, aindex){
 
 
 function bind_popup(){
-  $("#highlighter").hide();
   $(".ete_tree_img").bind('click',function(e){
                           $("#popup").css('left',e.pageX-2 );
                           $("#popup").css('top',e.pageY-2 );
@@ -91,27 +115,39 @@ function bind_popup(){
                           $("#popup").draggable({ cancel: 'span,li' });
                           $("#popup").show();
                             });
-  $("#highlighter").show();
 }
+
 function hide_popup(){
   $('#popup').hide();
 }
 
 
-function highlight_node(treeid, nodeid, faceid, x, y, width, height){
+function highlight_node(treeid1, treeid2, nodeid1, nodeid2, faceid, x1, y1, width1, height1, x2, y2, width2, height2){
 
-  console.log(treeid, nodeid, x, y, width, height);
-  var img = $('#'+treeid);
-  var offset = img.offset();
-  console.log(img);
-  console.log(offset);
+  console.log(treeid1, treeid2, nodeid1, nodeid2, faceid, x1, y1, width1, height1, x2, y2, width2, height2);
+  var img1 = $('#'+treeid1);
+  var offset1 = img1.offset();
+  console.log(img1);
+  console.log(offset1);
 
-  $("#highlighter").show();
-  $("#highlighter").css("visibility", 'visible');
-  $("#highlighter").css("top", offset.top+y-1);
-  $("#highlighter").css("left", offset.left+x-1);
-  $("#highlighter").css("width", width+1);
-  $("#highlighter").css("height", height+1);
+  $("#highlighter1").show();
+  $("#highlighter1").css("visibility", 'visible');
+  $("#highlighter1").css("top", offset1.top+y1-1);
+  $("#highlighter1").css("left", offset1.left+x1-1);
+  $("#highlighter1").css("width", width1+1);
+  $("#highlighter1").css("height", height1+1);
+    
+  var img2 = $('#'+treeid2);
+  var offset2 = img2.offset();
+  console.log(img2);
+  console.log(offset2);
+    
+  $("#highlighter2").show();
+  $("#highlighter2").css("visibility", 'visible');
+  $("#highlighter2").css("top", offset2.top+y2-1);
+  $("#highlighter2").css("left", offset2.left+x2-1);
+  $("#highlighter2").css("width", width2+1);
+  $("#highlighter2").css("height", height2+1);
 
 }
 function unhighlight_node(){

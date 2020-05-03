@@ -51,8 +51,8 @@ class WebTreeHandler(object):
         result = treediff(self.tree, ht.tree, attr1 = 'name', attr2 = 'name', dist_fn=EUCL_DIST, reduce_matrix=False,extended=False, jobs=1)
         
         for r in result:
-            node = self.tree.search_nodes(name=r[-2].name)[0]
-            target = ht.tree.search_nodes(name=r[-1].name)[0]
+            node = self.tree.search_nodes(_nid=int(r[-2]._nid))[0]
+            target = ht.tree.search_nodes(_nid=int(r[-1]._nid))[0]
             diff1 = r[2]
             diff2 = r[3]
             

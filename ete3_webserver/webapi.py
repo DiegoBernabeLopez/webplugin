@@ -185,7 +185,23 @@ def run_action():
 
     return web_return(img, response)
 
-
+@post('/show_dist')
+def show_dist():
+    if request.json:
+        source_dict = request.json
+    else:
+        source_dict = request.POST
+        
+    treeid = source_dict.get('treeid', '').strip()
+    nodeid = source_dict.get('nodeid', '').strip()
+    if treeid and nodeid:
+        html = "<ul class='ete_action_list'>"
+        h = LOADED_TREES[treeid]
+        html += """<li><a>XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</a></li>"""
+#         for aindex, aname in h.get_avail_actions(nodeid):
+#             html += """<li><a  onClick="run_action('%s', '%s', '%s', '%s');" >%s</a></li>""" %(treeid, nodeid, '', aindex, aname)
+        html += "</ul>"
+    return web_return(html, response)
 
 DEFAULT_ACTIONS = None
 DEFAULT_STYLE = None

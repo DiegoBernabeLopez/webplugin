@@ -44,20 +44,23 @@ class WebTreeHandler(object):
         # Initialze node internal IDs
         for index, n in enumerate(self.tree.traverse('preorder')):
             n._nid = index
-            self.diffdict['nodes'][n._nid] = {'target_nodeid' : -1, 'diff1' : None, 'diff2' : None}
+            self.diffdict['nodes'][n._nid] = {'target_nodeid' : -1, 'distance' : None, 'diff1' : None, 'diff2' : None}
 
     def diff(self, ht, attr1 = 'name', attr2 = 'name', dist_fn=EUCL_DIST, reduce_matrix=False,extended=False, jobs=1):
 
         result = treediff(self.tree, ht.tree, attr1 = 'name', attr2 = 'name', dist_fn=EUCL_DIST, reduce_matrix=False,extended=False, jobs=1)
         
+        self.diffdict['target'] = ht
+        
         for r in result:
             node = self.tree.search_nodes(_nid=int(r[-2]._nid))[0]
             target = ht.tree.search_nodes(_nid=int(r[-1]._nid))[0]
+            dist = r[0]
             diff1 = r[2]
             diff2 = r[3]
             
-            self.diffdict['nodes'][node._nid] = {'target_nodeid' : target._nid, 'diff1' : diff1, 'diff2' : diff2} 
-            self.diffdict['target'] = ht
+            self.diffdict['nodes'][node._nid] = {'target_nodeid' : target._nid, 'distance' : dist, 'diff1' : diff1, 'diff2' : diff2} 
+            
             
                     
     @timeit
@@ -84,8 +87,8 @@ class WebTreeHandler(object):
                 area = img_map["node_areas"].get(int(nodeid), [0,0,0,0])
                 area2 = target_map["node_areas"].get(int(self.diffdict['nodes'][nodeid]['target_nodeid']), [0,0,0,0])
                 html_map += """ <AREA SHAPE="rect" COORDS="%s,%s,%s,%s" 
-                                onMouseOut='unhighlight_node();'
-                                onMouseOver='highlight_node("%s", "%s", "%s", "%s", "%s", %s, %s, %s, %s, %s, %s, %s, %s);'
+                                onMouseOut='hide_diff();'
+                                onMouseMove='highlight_node("%s", "%s", "%s", "%s", "%s", %s, %s, %s, %s, %s, %s, %s, %s);'
                                 onClick='show_actions("%s", "%s");'
                                 href="javascript:void('%s');">""" %\
                     (int(x1), int(y1), int(x2), int(y2), # coords
@@ -99,8 +102,8 @@ class WebTreeHandler(object):
                 area = img_map["node_areas"].get(int(nodeid), [0,0,0,0])
                 area2 = target_map["node_areas"].get(int(self.diffdict['nodes'][nodeid]['target_nodeid']), [0,0,0,0])
                 html_map += """ <AREA SHAPE="rect" COORDS="%s,%s,%s,%s"
-                                onMouseOut='unhighlight_node();'
-                                onMouseOver='highlight_node("%s", "%s", "%s", "%s", "%s", %s, %s, %s, %s, %s, %s, %s, %s);'
+                                onMouseLeave='hide_diff();'
+                                onMouseEnter='highlight_node("%s", "%s", "%s", "%s", "%s", %s, %s, %s, %s, %s, %s, %s, %s);'
                                 onClick='show_actions("%s", "%s", "%s");'
                                 href='javascript:void("%s");'>""" %\
                     (int(x1),int(y1),int(x2),int(y2),
@@ -124,13 +127,6 @@ class WebTreeHandler(object):
         taxid = self.taxid
         run_fn = self.tree.actions.actions[aindex][2]
         return run_fn(self.tree, target, taxid)
-    
-    
-    
-    #def run_action(self, aindex, nodeid):
-    #    target = self.tree.search_nodes(_nid=int(nodeid))[0]
-    #    run_fn = self.tree.actions.actions[aindex][2]
-    #    return run_fn(self.tree, target)
     
 class NodeActions(object):
     def __str__(self):

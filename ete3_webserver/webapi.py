@@ -55,34 +55,6 @@ def index():
 def server_status():
     return web_return('alive', response)
 
-# WEB API FUNCTIONALITY
-# @post('/get_tree_image')
-# def get_tree_image():
-#     ''' Requires a POST param "newick" containing the tree to be loaded. '''
-
-#     if request.json:
-#         source_dict = request.json
-#     else:
-#         source_dict = request.POST
-        
-    
-#     newick = source_dict.get('newick', '').strip()
-#     alg = source_dict.get('alg', '').strip()
-#     treeid = source_dict.get('treeid', '').strip()
-    
-#     taxid = source_dict.get('taxid', '').strip()
-
-#     if not newick or not treeid:
-#         return web_return('No tree provided', response)
-
-
-#     h = TREE_HANDLER(newick, alg, taxid, treeid, DEFAULT_ACTIONS, DEFAULT_STYLE, PREDRAW_FN)
-#     LOADED_TREES[h.treeid] = h
-    
-
-#     # Renders initial tree
-#     img = h.redraw()
-#     return web_return(img, response)
 
 @post('/load_trees')
 def load_trees():
@@ -127,12 +99,6 @@ def load_trees():
     # do ete diff stuff
     h1.diff(h2)
     h2.diff(h1)
-    
-    
-    # Renders initial tree
-#     img1 = h1.redraw()
-    #img2 = h2.redraw()
-#     return web_return(img1, response)#, web_return(img1, response)
 
 @post('/draw_tree')
 def draw_tree():
@@ -197,9 +163,7 @@ def show_dist():
     if treeid and nodeid:
         html = "<ul class='ete_action_list'>"
         h = LOADED_TREES[treeid]
-        html += """<li><a>XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</a></li>"""
-#         for aindex, aname in h.get_avail_actions(nodeid):
-#             html += """<li><a  onClick="run_action('%s', '%s', '%s', '%s');" >%s</a></li>""" %(treeid, nodeid, '', aindex, aname)
+        html += """<li><a>Distance: %s</a></li>""" %(h.diffdict['nodes'][int(nodeid)]['distance'])
         html += "</ul>"
     return web_return(html, response)
 

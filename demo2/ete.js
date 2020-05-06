@@ -39,39 +39,10 @@ function get_tree_diff(newick1, recipient1, newick2, recipient2){
 }
 
 
-// function get_tree_image2(newick1, recipient1, newick2, recipient2){
-//   var treeid1 = makeid();
-//   $(recipient1).html('<div id="' + treeid1 + '">' + loading_img + '</div>');
-//   //$(recipient).fadeTo(500, 0.2);
-//   var params = {'newick':newick1, 'treeid':treeid1};
-//   $('#'+treeid1).load(ete_webplugin_URL+'/get_tree_image', params,
-//     function() {
-//             $('#'+treeid1).fadeTo(100, 0.9);
-//   });
-    
-//   var treeid2 = makeid();
-//   $(recipient2).html('<div id="' + treeid2 + '">' + loading_img + '</div>');
-//   //$(recipient).fadeTo(500, 0.2);
-//   var params = {'newick':newick2, 'treeid':treeid2};
-//   $('#'+treeid2).load(ete_webplugin_URL+'/get_tree_image', params,
-//     function() {
-//             $('#'+treeid2).fadeTo(100, 0.9);
-//   });
-// }
-
-// function get_tree_image(newick, recipient){
-//   var treeid = makeid();
-//   $(recipient).html('<div id="' + treeid + '">' + loading_img + '</div>');
-//   //$(recipient).fadeTo(500, 0.2);
-//   var params = {'newick':newick, 'treeid':treeid};
-//   $('#'+treeid).load(ete_webplugin_URL+'/get_tree_image', params,
-//     function() {
-//             $('#'+treeid).fadeTo(100, 0.9);
-//   });
-// }
 
 function run_action(treeid, nodeid, faceid, aindex){
   $("#popup").hide();
+  $("#popup2").hide(); 
   $('#'+treeid).html(loading_img);
   console.log(treeid, nodeid, faceid, aindex, $('#'+treeid));
   var params = {"treeid": treeid, "nodeid": nodeid, "faceid": faceid, "aindex":aindex};
@@ -89,36 +60,40 @@ function show_actions(treeid, nodeid, faceid){
   $('#popup').load(ete_webplugin_URL+'/get_actions', params);
 }
 
-// function run_action(treeid, nodeid, faceid, aindex){
-//   $("#popup").hide();
-//   $('#'+treeid).html(loading_img);
-//   console.log(treeid, nodeid, faceid, aindex, $('#'+treeid));
-//   var params = {"treeid": treeid, "nodeid": nodeid, "faceid": faceid, "aindex":aindex};
-//   $('#'+treeid).load(ete_webplugin_URL+'/run_action', params,
-//     function() {
-//       console.log('run action');
-//             $('#'+treeid).fadeTo(100, 0.9);
-//   });
-// }
-
 
 function bind_popup(){
-  $(".ete_tree_img").bind('click',function(e){
+
+    var onmousestop = function (e){
+                        $("#popup2").show();
+                        }, thread;
+    
+    $('.ete_tree_img').bind('mouseenter',function (e){
+                        onmousestop(e);
+                }).bind('mousemove',function (e){
+        
+                        $("#popup2").css('left',e.pageX + 15);
+                        $("#popup2").css('top',e.pageY );
+                        $("#popup2").css('position',"absolute" );
+                        $("#popup2").css('background-color',"#fff" );
+                        $("#popup2").draggable({ cancel: 'span,li' });
+                        $("#popup2").hide();
+                        thread&&clearTimeout(thread);
+                        thread = setTimeout(onmousestop, 1000);
+                        });    
+    
+    
+    $(".ete_tree_img").mouseleave(function(e){ 
+                          $("#popup2").hide();
+                          });
+    
+    $(".ete_tree_img").bind('click',function(e){
                           $("#popup").css('left',e.pageX-2 );
                           $("#popup").css('top',e.pageY-2 );
                           $("#popup").css('position',"absolute" );
                           $("#popup").css('background-color',"#fff" );
                           $("#popup").draggable({ cancel: 'span,li' });
                           $("#popup").show();
-                          });
-    
-   $(".ete_tree_img").mousemove(function(e){                         
-                          $("#popup2").css('left',e.pageX + 15);
-                          $("#popup2").css('top',e.pageY );
-                          $("#popup2").css('position',"absolute" );
-                          $("#popup2").css('background-color',"#fff" );
-                          $("#popup2").draggable({ cancel: 'span,li' });
-                          $("#popup2").show();
+                          $("#popup2").hide();
                           });
 }
 
@@ -127,7 +102,7 @@ function hide_popup(){
 }
 
 function hide_diff(){
-  $('#popup').hide();
+  $('#popup2').hide();
 }
 
 
@@ -161,17 +136,12 @@ function highlight_node(treeid1, treeid2, nodeid1, nodeid2, faceid, x1, y1, widt
     
   var params = {"treeid": treeid1, "nodeid": nodeid1};
   $('#popup2').load(ete_webplugin_URL+'/show_dist', params);
-//   $("#popup2").css('left',offset1.left + x1);
-//   $("#popup2").css('top',offset1.top + y1);
-  $("#popup2").css('position',"absolute" );
-  $("#popup2").css('background-color',"#fff" );
-  $("#popup2").draggable({ cancel: 'span,li' });
-  $("#popup2").show();
 
 }
 function unhighlight_node(){
   console.log("unhighlight");
-//   $("#highlighter").hide();
+  $("#highlighter1").hide();
+  $("#highlighter2").hide();
 }
 
 function makeid()
@@ -183,6 +153,13 @@ function makeid()
         text += possible.charAt(Math.floor(Math.random() * possible.length));
 
     return text;
+}
+
+function clear_all(){
+    $(".column").html("");
+    $("#popup2").hide();
+    $("#highlighter1").hide();
+    $("#highlighter2").hide();
 }
 
 

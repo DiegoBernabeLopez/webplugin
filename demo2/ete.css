@@ -138,14 +138,14 @@ background-color: #fff;
   }
 
 .ete_image1 {
-  position: relative;
+  position: absolute;
   top: 50px;
   left: 16px;
   font-size: 18px;
 }
 
 .ete_image2 {
-  position: relative;
+  position: absolute;
   top: 50px;
   left: 16px;
   font-size: 18px;
@@ -159,8 +159,9 @@ background-color: #fff;
 } */
 
 .column {
+  flex: 50%;
   float: left;
-  width: 33.33%;
+  width: auto;
   padding: 5px;
 }
 
@@ -168,7 +169,7 @@ background-color: #fff;
 #container::after {
   content: "";
   clear: both;
-  display: table;
+  display: flex;
 }
 
 

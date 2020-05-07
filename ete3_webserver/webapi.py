@@ -171,6 +171,70 @@ DEFAULT_ACTIONS = None
 DEFAULT_STYLE = None
 PREDRAW_FN = None
 
+@post('/color_nodes')
+def color_nodes():
+    if request.json:
+        source_dict = request.json
+    else:
+        source_dict = request.POST
+        
+    treeid1 = source_dict.get('treeid1', '').strip()
+    nodeid1 = source_dict.get('nodeid1', '').strip()
+    nodeid2 = source_dict.get('nodeid2', '').strip()
+    side = source_dict.get('side', '').strip()
+    
+    
+    if side == 'source':
+        if treeid1 and nodeid1 and nodeid2:
+            h = LOADED_TREES[treeid1]
+
+            target = h.tree.search_nodes(_nid=int(nodeid1))[0]
+
+            # Clean background
+            for leaf in h.tree.iter_leaves():
+                leaf.img_style['bgcolor'] = 'white'
+                leaf.img_style['size'] = 0
+                leaf.img_style['hz_line_width'] = 0
+
+            # Paint background
+            for leaf in target.iter_leaves():
+                attrib = getattr(leaf, 'name')
+                if attrib in h.diffdict['nodes'][int(nodeid2)]['diff']:
+                    leaf.img_style['bgcolor'] = 'pink'
+                    leaf.img_style['size'] = 8
+                    leaf.img_style['hz_line_width'] = 4
+
+            img = h.redraw()
+            
+    if side == 'target':
+        if treeid1 and nodeid1 and nodeid2:
+            h1 = LOADED_TREES[treeid1]
+            h2 = h1.diffdict['target']
+
+            source = h1.tree.search_nodes(_nid=int(nodeid1))[0]
+            target = h2.tree.search_nodes(_nid=int(nodeid2))[0]
+
+            # Clean background
+            for leaf in h2.tree.iter_leaves():
+                leaf.img_style['bgcolor'] = 'white'
+                leaf.img_style['size'] = 0
+                leaf.img_style['hz_line_width'] = 0
+
+            # Paint background
+            for leaf in target.iter_leaves():
+                attrib = getattr(leaf, 'name')
+                if attrib in h1.diffdict['nodes'][int(nodeid2)]['diff']:
+                    leaf.img_style['bgcolor'] = 'pink'
+                    leaf.img_style['size'] = 8
+                    leaf.img_style['hz_line_width'] = 4
+
+            img = h2.redraw()
+
+    return web_return(img, response)
+
+
+
+
 def start_server(node_actions=None, tree_style=None, predraw_fn=None, host="localhost", port=8989):
     global DEFAULT_STYLE, DEFAULT_ACTIONS, PREDRAW_FN
     

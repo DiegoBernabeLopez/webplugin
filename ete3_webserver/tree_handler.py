@@ -44,7 +44,7 @@ class WebTreeHandler(object):
         # Initialze node internal IDs
         for index, n in enumerate(self.tree.traverse('preorder')):
             n._nid = index
-            self.diffdict['nodes'][n._nid] = {'target_nodeid' : -1, 'distance' : None, 'diff1' : None, 'diff2' : None}
+            self.diffdict['nodes'][n._nid] = {'target_nodeid' : -1, 'distance' : None, 'side1' : None, 'side2' : None, 'diff' : set()}
 
     def diff(self, ht, attr1 = 'name', attr2 = 'name', dist_fn=EUCL_DIST, reduce_matrix=False,extended=False, jobs=1):
 
@@ -56,10 +56,11 @@ class WebTreeHandler(object):
             node = self.tree.search_nodes(_nid=int(r[-2]._nid))[0]
             target = ht.tree.search_nodes(_nid=int(r[-1]._nid))[0]
             dist = r[0]
-            diff1 = r[2]
-            diff2 = r[3]
+            side1 = r[2]
+            side2 = r[3]
+            diff = r[4]
             
-            self.diffdict['nodes'][node._nid] = {'target_nodeid' : target._nid, 'distance' : dist, 'diff1' : diff1, 'diff2' : diff2} 
+            self.diffdict['nodes'][node._nid] = {'target_nodeid' : target._nid, 'distance' : dist, 'side1' : side1, 'side2' : side2, 'diff' : diff} 
             
             
                     

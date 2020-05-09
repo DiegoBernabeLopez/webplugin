@@ -10,7 +10,7 @@ def timeit(f):
     def a_wrapper_accepting_arguments(*args, **kargs):
         t1 = time.time()
         r = f(*args, **kargs)
-        #print " %0.3f secs: %s" %(time.time() - t1, f.__name__)
+        print ("%s: %0.3f secs " %(f.__name__, time.time() - t1))
         return r
     return a_wrapper_accepting_arguments
 
@@ -64,7 +64,6 @@ class WebTreeHandler(object):
             
             
                     
-    @timeit
     def redraw(self):
         base64_img, img_map = self.tree.render("%%return.PNG", tree_style=self.tree.tree_style)
         _, target_map = self.diffdict['target'].tree.render("%%return.PNG", tree_style=self.tree.tree_style)

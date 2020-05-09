@@ -151,8 +151,8 @@ def run_action():
 
     return web_return(img, response)
 
-@post('/show_dist')
-def show_dist():
+@post('/get_dist')
+def get_dist():
     if request.json:
         source_dict = request.json
     else:

@@ -49,7 +49,7 @@ def enable_cors():
 
 @route('/')
 def index():
-    return static_file("webplugin_example.html", root='/home/django/webplugin/demo')
+    return static_file("index.html", root='/var/www/etediff.ddns.net')
 
 @route('/status')
 def server_status():

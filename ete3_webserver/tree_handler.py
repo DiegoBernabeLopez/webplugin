@@ -88,11 +88,11 @@ class WebTreeHandler(object):
                 area2 = target_map["node_areas"].get(int(self.diffdict['nodes'][nodeid]['target_nodeid']), [0,0,0,0])
                 html_map += """ <AREA SHAPE="rect" COORDS="%s,%s,%s,%s" 
                                 onMouseLeave='hide_diff();'
-                                onMouseEnter='highlight_node("%s", "%s", "%s", "%s", "%s", %s, %s, %s, %s, %s, %s, %s, %s);'
+                                onMouseEnter='highlight_node("%s", "%s", "%s", "%s", "%s", %s, %s, %s, %s, %s, %s, %s, %s, %.2f);'
                                 onClick='show_actions("%s", "%s", "%s");'
                                 href="javascript:void('%s');">""" %\
                     (int(x1), int(y1), int(x2), int(y2), # coords
-                     self.treeid, self.diffdict['target'].treeid, nodeid, self.diffdict['nodes'][nodeid]['target_nodeid'], text, area[0], area[1], area[2]-area[0], area[3]-area[1], area2[0], area2[1], area2[2]-area2[0], area2[3]-area2[1], # highlight_node
+                     self.treeid, self.diffdict['target'].treeid, nodeid, self.diffdict['nodes'][nodeid]['target_nodeid'], text, area[0], area[1], area[2]-area[0], area[3]-area[1], area2[0], area2[1], area2[2]-area2[0], area2[3]-area2[1], self.diffdict['nodes'][nodeid]['distance'], # highlight_node
                      self.treeid, nodeid, text, # show_actions
                      nodeid) # javascript:void
 
@@ -103,11 +103,11 @@ class WebTreeHandler(object):
                 area2 = target_map["node_areas"].get(int(self.diffdict['nodes'][nodeid]['target_nodeid']), [0,0,0,0])
                 html_map += """ <AREA SHAPE="rect" COORDS="%s,%s,%s,%s"
                                 onMouseLeave='hide_diff();'
-                                onMouseEnter='highlight_node("%s", "%s", "%s", "%s", "%s", %s, %s, %s, %s, %s, %s, %s, %s);'
+                                onMouseEnter='highlight_node("%s", "%s", "%s", "%s", "%s", %s, %s, %s, %s, %s, %s, %s, %s, %.2f);'
                                 onClick='show_actions("%s", "%s", "%s");'
                                 href='javascript:void("%s");'>""" %\
                     (int(x1),int(y1),int(x2),int(y2),
-                     self.treeid, self.diffdict['target'].treeid, nodeid, self.diffdict['nodes'][nodeid]['target_nodeid'], text, area[0], area[1], area[2]-area[0], area[3]-area[1], area2[0], area2[1], area2[2]-area2[0], area2[3]-area2[1],
+                     self.treeid, self.diffdict['target'].treeid, nodeid, self.diffdict['nodes'][nodeid]['target_nodeid'], text, area[0], area[1], area[2]-area[0], area[3]-area[1], area2[0], area2[1], area2[2]-area2[0], area2[3]-area2[1], self.diffdict['nodes'][nodeid]['distance'],
                      self.treeid, nodeid, text,
                      text)
         html_map += '</MAP>'

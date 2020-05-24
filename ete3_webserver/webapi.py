@@ -199,7 +199,7 @@ def color_nodes():
             # Paint background
             for leaf in source.iter_leaves():
                 attrib = getattr(leaf, 'name')
-                if attrib in h.diffdict['nodes'][int(nodeid1)]['diff']:
+                if attrib in h.diffdict['nodes'][int(nodeid1)]['diff'] and h.diffdict['nodes'][int(nodeid1)]['distance'] < 1.0:
                     leaf.img_style['bgcolor'] = 'pink'
                     leaf.img_style['size'] = 8
                     leaf.img_style['hz_line_width'] = 4
@@ -223,7 +223,7 @@ def color_nodes():
             # Paint background
             for leaf in target.iter_leaves():
                 attrib = getattr(leaf, 'name')
-                if attrib in h1.diffdict['nodes'][int(nodeid2)]['diff']:
+                if attrib in h1.diffdict['nodes'][int(nodeid1)]['diff']  and h1.diffdict['nodes'][int(nodeid1)]['distance'] < 1.0:
                     leaf.img_style['bgcolor'] = 'pink'
                     leaf.img_style['size'] = 8
                     leaf.img_style['hz_line_width'] = 4

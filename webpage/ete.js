@@ -70,7 +70,7 @@ function bind_popup(){
 
 
     var onmousestop = function (e){
-                        if($("#popup").is(":hidden")) {
+                        if($("#popup").is(":hidden") && $("#highlighter1").is(":visible")) {
                             $("#popup2").show();
                         };
                 }, thread;
@@ -115,45 +115,43 @@ function hide_diff(){
 
 
 
-function highlight_node(treeid1, treeid2, nodeid1, nodeid2, faceid, x1, y1, width1, height1, x2, y2, width2, height2){
+function highlight_node(treeid1, treeid2, nodeid1, nodeid2, faceid, x1, y1, width1, height1, x2, y2, width2, height2, dist){
 
-    console.log(treeid1, treeid2, nodeid1, nodeid2, faceid, x1, y1, width1, height1, x2, y2, width2, height2);
+    console.log(treeid1, treeid2, nodeid1, nodeid2, faceid, x1, y1, width1, height1, x2, y2, width2, height2, dist);
     var img1 = $('#'+treeid1);
     var offset1 = img1.offset();
     console.log(img1);
     console.log(offset1);
 
-    $("#highlighter1").show();
-    $("#highlighter1").css("visibility", 'visible');
-    $("#highlighter1").css("top", offset1.top+y1-1);
-    $("#highlighter1").css("left", offset1.left+x1-1);
-    $("#highlighter1").css("width", width1+1);
-    $("#highlighter1").css("height", height1+1);
+    if (dist < 1.0) {
+        $("#highlighter1").show();
+        $("#highlighter1").css("visibility", 'visible');
+        $("#highlighter1").css("top", offset1.top+y1-1);
+        $("#highlighter1").css("left", offset1.left+x1-1);
+        $("#highlighter1").css("width", width1+1);
+        $("#highlighter1").css("height", height1+1);
 
-    var img2 = $('#'+treeid2);
-    var offset2 = img2.offset();
-    console.log(img2);
-    console.log(offset2);
+        var img2 = $('#'+treeid2);
+        var offset2 = img2.offset();
+        console.log(img2);
+        console.log(offset2);
 
-    $("#highlighter2").show();
-    $("#highlighter2").css("visibility", 'visible');
-    $("#highlighter2").css("top", offset2.top+y2-1);
-    $("#highlighter2").css("left", offset2.left+x2-1);
-    $("#highlighter2").css("width", width2+1);
-    $("#highlighter2").css("height", height2+1);
-
+        $("#highlighter2").show();
+        $("#highlighter2").css("visibility", 'visible');
+        $("#highlighter2").css("top", offset2.top+y2-1);
+        $("#highlighter2").css("left", offset2.left+x2-1);
+        $("#highlighter2").css("width", width2+1);
+        $("#highlighter2").css("height", height2+1);
+    } else {unhighlight_node()};
 
 
     var params = {"treeid": treeid1, "nodeid": nodeid1};
     $('#popup2').load(ete_webplugin_URL+'/get_dist', params);
 
 
-
-    var test = $("#popup").is(":visible")
-
-
     $('#'+treeid1)[0].onmousemove = (function() {
         var onmousestop = function() {
+
                 var params = {"treeid1": treeid1, "nodeid1": nodeid1, "nodeid2": nodeid2, 'side' : 'source'};
              $('#'+treeid1).load(ete_webplugin_URL+'/color_nodes', params,
                 function() {
@@ -174,10 +172,7 @@ function highlight_node(treeid1, treeid2, nodeid1, nodeid2, faceid, x1, y1, widt
         };
     })();
 
-    
-    if (test == true){
-      $("#popup").hide();
-    };
+    hide_popup();
 
     
 
@@ -200,18 +195,16 @@ function makeid()
 }
 
 function clear_all(){
+    hide_popup();
+    hide_diff();
+    unhighlight_node();
     $(".column").html("");
-    $("#popup").hide();
-    $("#popup2").hide();
-    $("#highlighter1").hide();
-    $("#highlighter2").hide();
 }
 
 function clear_elements(){
-    $("#popup").hide();
-    $("#popup2").hide();
-    $("#highlighter1").hide();
-    $("#highlighter2").hide();
+    hide_popup();
+    hide_diff();
+    unhighlight_node();
 }
 
 

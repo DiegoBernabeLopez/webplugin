@@ -5,14 +5,14 @@ from ete3 import TreeStyle, TextFace, add_face_to_node, ImgFace, BarChartFace
 # Custom ETE Tree styles and web actions
 
 
-def show_action_root(node):
-    if node.up:
-        return True
-    return False
+# def show_action_root(node):
+#     if node.up:
+#         return True
+#     return False
 
-def show_action_highlight(node):
-    # Any node can be highlighted
-    return True
+# def show_action_highlight(node):
+#     # Any node can be highlighted
+#     return True
 
 def show_action_change_style(node):
     return True
@@ -129,8 +129,8 @@ ts2 = TreeStyle()
 
 actions = NodeActions()
 
-actions.add_action('Root here', show_action_root, run_action_root)
-actions.add_action('Highlight', show_action_highlight, run_action_highlight)
+# actions.add_action('Root here', show_action_root, run_action_root)
+# actions.add_action('Highlight', show_action_highlight, run_action_highlight)
 actions.add_action('Change style', show_action_change_style, run_action_change_style)
 actions.add_action('Delete node', show_action_delete_node, run_action_delete_node)
 

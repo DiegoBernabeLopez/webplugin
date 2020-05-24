@@ -151,37 +151,29 @@ function highlight_node(treeid1, treeid2, nodeid1, nodeid2, faceid, x1, y1, widt
 
     var test = $("#popup").is(":visible")
 
-//     var params = {"treeid1": treeid1, "nodeid1": nodeid1, "nodeid2": nodeid2, 'side' : 'source'};
-//     $('#'+treeid1)[0].onmousemove = (function() {
-//         var onmousestop = function() {
-//              $('#'+treeid1).load(ete_webplugin_URL+'/color_nodes', params,
-//                 function() {
-//                 console.log('color nodes');
-//                 $('#'+treeid1).fadeTo(100, 0.9);
-//       });
-//         }, thread;
 
-//         return function() {
-//             clearTimeout(thread);
-//             thread = setTimeout(onmousestop, 500);
-//         };
-//     })();
-    
-//     var params = {"treeid1": treeid1, "nodeid1": nodeid1, "nodeid2": nodeid2, 'side' : 'source'};
-//     $('#'+treeid2)[0].onmousemove = (function() {
-//         var onmousestop = function() {
-//              $('#'+treeid1).load(ete_webplugin_URL+'/color_nodes', params,
-//                 function() {
-//                 console.log('color nodes');
-//                 $('#'+treeid2).fadeTo(100, 0.9);
-//       });
-//         }, thread;
+    $('#'+treeid1)[0].onmousemove = (function() {
+        var onmousestop = function() {
+                var params = {"treeid1": treeid1, "nodeid1": nodeid1, "nodeid2": nodeid2, 'side' : 'source'};
+             $('#'+treeid1).load(ete_webplugin_URL+'/color_nodes', params,
+                function() {
+                console.log('color nodes');
+                $('#'+treeid1).fadeTo(100, 0.9);
+      })
+            var params = {"treeid1": treeid1, "nodeid1": nodeid1, "nodeid2": nodeid2, 'side' : 'target'};
+                $('#'+treeid2).load(ete_webplugin_URL+'/color_nodes', params,
+                function() {
+                console.log('color nodes');
+                $('#'+treeid2).fadeTo(100, 0.9);
+      });
+        }, thread;
 
-//         return function() {
-//             clearTimeout(thread);
-//             thread = setTimeout(onmousestop, 500);
-//         };
-//     })();
+        return function() {
+            clearTimeout(thread);
+            thread = setTimeout(onmousestop, 500);
+        };
+    })();
+
     
     if (test == true){
       $("#popup").hide();

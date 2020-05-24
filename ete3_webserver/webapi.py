@@ -188,7 +188,7 @@ def color_nodes():
         if treeid1 and nodeid1 and nodeid2:
             h = LOADED_TREES[treeid1]
 
-            target = h.tree.search_nodes(_nid=int(nodeid1))[0]
+            source = h.tree.search_nodes(_nid=int(nodeid1))[0]
 
             # Clean background
             for leaf in h.tree.iter_leaves():
@@ -197,16 +197,16 @@ def color_nodes():
                 leaf.img_style['hz_line_width'] = 0
 
             # Paint background
-            for leaf in target.iter_leaves():
+            for leaf in source.iter_leaves():
                 attrib = getattr(leaf, 'name')
-                if attrib in h.diffdict['nodes'][int(nodeid2)]['diff']:
+                if attrib in h.diffdict['nodes'][int(nodeid1)]['diff']:
                     leaf.img_style['bgcolor'] = 'pink'
                     leaf.img_style['size'] = 8
                     leaf.img_style['hz_line_width'] = 4
 
             img = h.redraw()
             
-    if side == 'target':
+    elif side == 'target':
         if treeid1 and nodeid1 and nodeid2:
             h1 = LOADED_TREES[treeid1]
             h2 = h1.diffdict['target']

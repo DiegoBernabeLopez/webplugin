@@ -4,7 +4,7 @@ import random
 import logging as log
 from ete3 import PhyloTree, TreeStyle, NCBITaxa, Tree
 from ete3.parser.newick import NewickError
-from ete3.tools.ete_diff import treediff, EUCL_DIST
+from ete3.tools.ete_diff import treediff, EUCL_DIST, EUCL_DIST_B_ALL
 
 def timeit(f):
     def a_wrapper_accepting_arguments(*args, **kargs):
@@ -45,7 +45,7 @@ class WebTreeHandler(object):
             n.diffdict = {'target_nodeid' : -1, 'distance' : None, 'side1' : None, 'side2' : None, 'diff' : set()}
             self.diffdict['nodes'][n._nid] = {'target_nodeid' : -1, 'distance' : None, 'side1' : None, 'side2' : None, 'diff' : set()}
 
-    def diff(self, ht, attr1 = 'name', attr2 = 'name', dist_fn=EUCL_DIST, reduce_matrix=False,extended=False, jobs=1):
+    def diff(self, ht, attr1 = 'name', attr2 = 'name', dist_fn=EUCL_DIST_B_ALL, reduce_matrix=False,extended=False, jobs=1):
 
         result = treediff(self.tree, ht.tree, attr1 = 'name', attr2 = 'name', dist_fn=EUCL_DIST, reduce_matrix=False,extended=False, jobs=1)
         

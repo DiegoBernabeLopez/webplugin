@@ -69,14 +69,12 @@ def load_trees():
     newick1 = source_dict.get('newick1', '').strip()
     alg1 = source_dict.get('alg1', '').strip()
     treeid1 = source_dict.get('treeid1', '').strip()
-    
-    taxid1 = source_dict.get('taxid1', '').strip()
 
     if not newick1 or not treeid1:
         return web_return('No source tree provided', response)
 
 
-    h1 = TREE_HANDLER(newick1, alg1, taxid1, treeid1, DEFAULT_ACTIONS, DEFAULT_STYLE, PREDRAW_FN)
+    h1 = TREE_HANDLER(newick1, alg1, treeid1, DEFAULT_ACTIONS, DEFAULT_STYLE, PREDRAW_FN)
     LOADED_TREES[h1.treeid] = h1
     
     
@@ -84,14 +82,12 @@ def load_trees():
     newick2 = source_dict.get('newick2', '').strip()
     alg2 = source_dict.get('alg2', '').strip()
     treeid2 = source_dict.get('treeid2', '').strip()
-    
-    taxid2 = source_dict.get('taxid2', '').strip()
 
     if not newick2 or not treeid2:
         return web_return('No target tree provided', response)
 
 
-    h2 = TREE_HANDLER(newick2, alg2, taxid2, treeid2, DEFAULT_ACTIONS, DEFAULT_STYLE, PREDRAW_FN)
+    h2 = TREE_HANDLER(newick2, alg2, treeid2, DEFAULT_ACTIONS, DEFAULT_STYLE, PREDRAW_FN)
     LOADED_TREES[h2.treeid] = h2
     
     
@@ -122,13 +118,18 @@ def get_action():
     else:
         source_dict = request.POST
         
-    treeid = source_dict.get('treeid', '').strip()
-    nodeid = source_dict.get('nodeid', '').strip()
-    if treeid and nodeid:
+    treeid1 = source_dict.get('treeid', '').strip()
+    nodeid1 = source_dict.get('nodeid', '').strip()
+    
+    
+    
+    if treeid1 and nodeid1:
         html = "<ul class='ete_action_list'>"
-        h = LOADED_TREES[treeid]
-        for aindex, aname in h.get_avail_actions(nodeid):
-            html += """<li><a  onClick="run_action('%s', '%s', '%s', '%s');" >%s</a></li>""" %(treeid, nodeid, '', aindex, aname)
+        h = LOADED_TREES[treeid1]
+        treeid2 = h.diffdict['target'].treeid
+        nodeid2 = h.diffdict['nodes'][int(nodeid1)]['target_nodeid']
+        for aindex, aname in h.get_avail_actions(nodeid1):
+            html += """<li><a  onClick="run_action('%s', '%s', '%s', '%s', '%s', '%s');" >%s</a></li>""" %(treeid1, treeid2, nodeid1, nodeid2, '', aindex, aname)
         html += "</ul>"
     return web_return(html, response)
 
@@ -171,66 +172,66 @@ DEFAULT_ACTIONS = None
 DEFAULT_STYLE = None
 PREDRAW_FN = None
 
-@post('/color_nodes')
-def color_nodes():
-    if request.json:
-        source_dict = request.json
-    else:
-        source_dict = request.POST
+# @post('/color_nodes')
+# def color_nodes():
+#     if request.json:
+#         source_dict = request.json
+#     else:
+#         source_dict = request.POST
         
-    treeid1 = source_dict.get('treeid1', '').strip()
-    nodeid1 = source_dict.get('nodeid1', '').strip()
-    nodeid2 = source_dict.get('nodeid2', '').strip()
-    side = source_dict.get('side', '').strip()
+#     treeid1 = source_dict.get('treeid1', '').strip()
+#     nodeid1 = source_dict.get('nodeid1', '').strip()
+#     nodeid2 = source_dict.get('nodeid2', '').strip()
+#     side = source_dict.get('side', '').strip()
     
     
-    if side == 'source':
-        if treeid1 and nodeid1 and nodeid2:
-            h = LOADED_TREES[treeid1]
+#     if side == 'source':
+#         if treeid1 and nodeid1 and nodeid2:
+#             h = LOADED_TREES[treeid1]
 
-            source = h.tree.search_nodes(_nid=int(nodeid1))[0]
+#             source = h.tree.search_nodes(_nid=int(nodeid1))[0]
 
-            # Clean background
-            for leaf in h.tree.iter_leaves():
-                leaf.img_style['bgcolor'] = 'white'
-                leaf.img_style['size'] = 0
-                leaf.img_style['hz_line_width'] = 0
+#             # Clean background
+#             for leaf in h.tree.iter_leaves():
+#                 leaf.img_style['bgcolor'] = 'white'
+#                 leaf.img_style['size'] = 0
+#                 leaf.img_style['hz_line_width'] = 0
 
-            # Paint background
-            for leaf in source.iter_leaves():
-                attrib = getattr(leaf, 'name')
-                if attrib in h.diffdict['nodes'][int(nodeid1)]['diff'] and h.diffdict['nodes'][int(nodeid1)]['distance'] < 1.0:
-                    leaf.img_style['bgcolor'] = 'pink'
-                    leaf.img_style['size'] = 8
-                    leaf.img_style['hz_line_width'] = 4
+#             # Paint background
+#             for leaf in source.iter_leaves():
+#                 attrib = getattr(leaf, 'name')
+#                 if attrib in h.diffdict['nodes'][int(nodeid1)]['diff'] and h.diffdict['nodes'][int(nodeid1)]['distance'] < 1.0:
+#                     leaf.img_style['bgcolor'] = 'pink'
+#                     leaf.img_style['size'] = 8
+#                     leaf.img_style['hz_line_width'] = 4
 
-            img = h.redraw()
+#             img = h.redraw()
             
-    elif side == 'target':
-        if treeid1 and nodeid1 and nodeid2:
-            h1 = LOADED_TREES[treeid1]
-            h2 = h1.diffdict['target']
+#     elif side == 'target':
+#         if treeid1 and nodeid1 and nodeid2:
+#             h1 = LOADED_TREES[treeid1]
+#             h2 = h1.diffdict['target']
 
-            source = h1.tree.search_nodes(_nid=int(nodeid1))[0]
-            target = h2.tree.search_nodes(_nid=int(nodeid2))[0]
+#             source = h1.tree.search_nodes(_nid=int(nodeid1))[0]
+#             target = h2.tree.search_nodes(_nid=int(nodeid2))[0]
 
-            # Clean background
-            for leaf in h2.tree.iter_leaves():
-                leaf.img_style['bgcolor'] = 'white'
-                leaf.img_style['size'] = 0
-                leaf.img_style['hz_line_width'] = 0
+#             # Clean background
+#             for leaf in h2.tree.iter_leaves():
+#                 leaf.img_style['bgcolor'] = 'white'
+#                 leaf.img_style['size'] = 0
+#                 leaf.img_style['hz_line_width'] = 0
 
-            # Paint background
-            for leaf in target.iter_leaves():
-                attrib = getattr(leaf, 'name')
-                if attrib in h1.diffdict['nodes'][int(nodeid1)]['diff']  and h1.diffdict['nodes'][int(nodeid1)]['distance'] < 1.0:
-                    leaf.img_style['bgcolor'] = 'pink'
-                    leaf.img_style['size'] = 8
-                    leaf.img_style['hz_line_width'] = 4
+#             # Paint background
+#             for leaf in target.iter_leaves():
+#                 attrib = getattr(leaf, 'name')
+#                 if attrib in h1.diffdict['nodes'][int(nodeid1)]['diff']  and h1.diffdict['nodes'][int(nodeid1)]['distance'] < 1.0:
+#                     leaf.img_style['bgcolor'] = 'pink'
+#                     leaf.img_style['size'] = 8
+#                     leaf.img_style['hz_line_width'] = 4
 
-            img = h2.redraw()
+#             img = h2.redraw()
 
-    return web_return(img, response)
+#     return web_return(img, response)
 
 
 

@@ -20,7 +20,7 @@ def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
 
 
 class WebTreeHandler(object):
-    def __init__(self, newick, alg, taxid, tid, actions, style, predraw_fn=None):
+    def __init__(self, newick, alg, tid, actions, style, predraw_fn=None):
         try:
             self.tree = PhyloTree(newick = newick, alignment = alg, alg_format="fasta")            
         except NewickError:
@@ -34,8 +34,6 @@ class WebTreeHandler(object):
             predraw_fn(self.tree)
         self.tree.actions = actions
         self.tree.tree_style = style
-        
-        self.taxid = taxid
 
         self.treeid = tid
         self.mapid = "map_" + tid
@@ -44,6 +42,7 @@ class WebTreeHandler(object):
         # Initialze node internal IDs
         for index, n in enumerate(self.tree.traverse('preorder')):
             n._nid = index
+            n.diffdict = {'target_nodeid' : -1, 'distance' : None, 'side1' : None, 'side2' : None, 'diff' : set()}
             self.diffdict['nodes'][n._nid] = {'target_nodeid' : -1, 'distance' : None, 'side1' : None, 'side2' : None, 'diff' : set()}
 
     def diff(self, ht, attr1 = 'name', attr2 = 'name', dist_fn=EUCL_DIST, reduce_matrix=False,extended=False, jobs=1):
@@ -59,6 +58,8 @@ class WebTreeHandler(object):
             side1 = r[2]
             side2 = r[3]
             diff = r[4]
+            
+            node.diffdict = {'target_nodeid' : target._nid, 'distance' : dist, 'side1' : side1, 'side2' : side2, 'diff' : diff} 
             
             self.diffdict['nodes'][node._nid] = {'target_nodeid' : target._nid, 'distance' : dist, 'side1' : side1, 'side2' : side2, 'diff' : diff} 
             
@@ -121,11 +122,10 @@ class WebTreeHandler(object):
                 action_list.append([aindex, aname])
         return action_list
 
-    def run_action(self, aindex, nodeid):
-        target = self.tree.search_nodes(_nid=int(nodeid))[0]
-        taxid = self.taxid
+    def run_action(self, aindex, nodeid, side = 'source'):
+        source = self.tree.search_nodes(_nid=int(nodeid))[0]
         run_fn = self.tree.actions.actions[aindex][2]
-        return run_fn(self.tree, target, taxid)
+        return run_fn(self.tree, source)
     
 class NodeActions(object):
     def __str__(self):

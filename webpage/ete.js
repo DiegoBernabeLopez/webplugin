@@ -41,19 +41,27 @@ function get_tree_diff(newick1, recipient1, newick2, recipient2){
 
 
 
-function run_action(treeid, nodeid, faceid, aindex){
+function run_action(treeid1, treeid2, nodeid1, nodeid2, faceid, aindex){
   $("#popup").hide();
   $("#popup2").hide(); 
-  $('#'+treeid).html(loading_img);
-  console.log(treeid, nodeid, faceid, aindex, $('#'+treeid));
+  $('#'+treeid1).html(loading_img);
+  $('#'+treeid2).html(loading_img);
+  console.log(treeid1, treeid2, nodeid1, nodeid2, faceid, aindex, $('#'+treeid1), $('#'+treeid2));
   
   clear_elements();
     
-  var params = {"treeid": treeid, "nodeid": nodeid, "faceid": faceid, "aindex":aindex};
-  $('#'+treeid).load(ete_webplugin_URL+'/run_action', params,
+  var params = {"treeid": treeid1, "nodeid": nodeid1, "faceid": faceid, "aindex": aindex};
+  $('#'+treeid1).load(ete_webplugin_URL+'/run_action', params,
     function() {
       console.log('run action');
-            $('#'+treeid).fadeTo(100, 0.9);
+            $('#'+treeid1).fadeTo(100, 0.9);
+  });
+    
+  var params = {"treeid": treeid2, "nodeid": nodeid2, "faceid": faceid, "aindex": aindex};
+  $('#'+treeid2).load(ete_webplugin_URL+'/run_action', params,
+    function() {
+      console.log('run action');
+            $('#'+treeid2).fadeTo(100, 0.9);
   });
 }
 
@@ -149,28 +157,28 @@ function highlight_node(treeid1, treeid2, nodeid1, nodeid2, faceid, x1, y1, widt
     $('#popup2').load(ete_webplugin_URL+'/get_dist', params);
 
 
-    $('#'+treeid1)[0].onmousemove = (function() {
-        var onmousestop = function() {
+//     $('#'+treeid1)[0].onmousemove = (function() {
+//         var onmousestop = function() {
 
-                var params = {"treeid1": treeid1, "nodeid1": nodeid1, "nodeid2": nodeid2, 'side' : 'source'};
-             $('#'+treeid1).load(ete_webplugin_URL+'/color_nodes', params,
-                function() {
-                console.log('color nodes');
-                $('#'+treeid1).fadeTo(100, 0.9);
-      })
-            var params = {"treeid1": treeid1, "nodeid1": nodeid1, "nodeid2": nodeid2, 'side' : 'target'};
-                $('#'+treeid2).load(ete_webplugin_URL+'/color_nodes', params,
-                function() {
-                console.log('color nodes');
-                $('#'+treeid2).fadeTo(100, 0.9);
-      });
-        }, thread;
+//                 var params = {"treeid1": treeid1, "nodeid1": nodeid1, "nodeid2": nodeid2, 'side' : 'source'};
+//              $('#'+treeid1).load(ete_webplugin_URL+'/color_nodes', params,
+//                 function() {
+//                 console.log('color nodes');
+//                 $('#'+treeid1).fadeTo(100, 0.9);
+//       })
+//             var params = {"treeid1": treeid1, "nodeid1": nodeid1, "nodeid2": nodeid2, 'side' : 'target'};
+//                 $('#'+treeid2).load(ete_webplugin_URL+'/color_nodes', params,
+//                 function() {
+//                 console.log('color nodes');
+//                 $('#'+treeid2).fadeTo(100, 0.9);
+//       });
+//         }, thread;
 
-        return function() {
-            clearTimeout(thread);
-            thread = setTimeout(onmousestop, 500);
-        };
-    })();
+//         return function() {
+//             clearTimeout(thread);
+//             thread = setTimeout(onmousestop, 500);
+//         };
+//     })();
 
     hide_popup();
 

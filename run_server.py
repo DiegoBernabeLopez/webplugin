@@ -17,14 +17,32 @@ from ete3 import TreeStyle, TextFace, add_face_to_node, ImgFace, BarChartFace
 def show_action_change_style(node):
     return True
 
-def show_action_delete_node(node):
+# def show_action_delete_node(node):
+#     return True
+
+def show_action_diff(node):
     return True
 
 ##
 # Run actions
 
-def run_action_root(tree, node, taxid):
+def run_action_root(tree, node):
     tree.set_outgroup(node)
+    return
+
+def run_action_diff(tree, node):
+    # Clean background
+    for leaf in tree.iter_leaves():
+        leaf.img_style['bgcolor'] = 'white'
+        leaf.img_style['size'] = 0
+        leaf.img_style['hz_line_width'] = 0
+
+    for leaf in node.iter_leaves():
+        attrib = getattr(leaf, 'name')
+        if attrib in node.diffdict['diff'] and node.diffdict['distance'] < 1.0:
+            leaf.img_style['bgcolor'] = 'pink'
+            leaf.img_style['size'] = 8
+            leaf.img_style['hz_line_width'] = 4
     return
 
 def toggle_highlight_node(node, prev_highlighted):
@@ -43,7 +61,7 @@ def toggle_highlight_node(node, prev_highlighted):
     
     return
 
-def run_action_highlight(tree, node, taxid):
+def run_action_highlight(tree, node):
 
     if not "highlighted" in node.features:
         node.add_feature("highlighted", False)
@@ -59,18 +77,19 @@ def run_action_highlight(tree, node, taxid):
         
     return
 
-def run_action_change_style(tree, node, taxid):
+def run_action_change_style(tree, node):
     if tree.tree_style == ts:
         tree.tree_style = ts2
     else:
         tree.tree_style = ts
+    return
         
-def run_action_delete_node(tree, node, taxid):
+def run_action_delete_node(tree, node):
     parent = node.up
     remove_node = node.detach()
     
     if len(parent.get_children()) == 0:
-        run_action_delete_node(tree, parent, taxid)
+        run_action_delete_node(tree, parent)
         
     return
 
@@ -132,7 +151,8 @@ actions = NodeActions()
 # actions.add_action('Root here', show_action_root, run_action_root)
 # actions.add_action('Highlight', show_action_highlight, run_action_highlight)
 actions.add_action('Change style', show_action_change_style, run_action_change_style)
-actions.add_action('Delete node', show_action_delete_node, run_action_delete_node)
+# actions.add_action('Delete node', show_action_delete_node, run_action_delete_node)
+actions.add_action('Show differences', show_action_diff, run_action_diff)
 
 
 start_server(node_actions=actions, tree_style=ts, host="localhost", port=8989)

@@ -17,6 +17,9 @@ from ete3 import TreeStyle, TextFace, add_face_to_node, ImgFace, BarChartFace
 def show_action_change_style(node):
     return True
 
+def show_action_clear_highlight(node):
+    return True
+
 # def show_action_delete_node(node):
 #     return True
 
@@ -39,10 +42,18 @@ def run_action_diff(tree, node):
 
     for leaf in node.iter_leaves():
         attrib = getattr(leaf, 'name')
-        if attrib in node.diffdict['diff'] and node.diffdict['distance'] < 1.0:
+        if attrib in node.diffdict['diff']:
             leaf.img_style['bgcolor'] = 'pink'
             leaf.img_style['size'] = 8
             leaf.img_style['hz_line_width'] = 4
+    return
+
+def run_clear_highlight(tree, node):
+    for leaf in tree.iter_leaves():
+        leaf.img_style['bgcolor'] = 'white'
+        leaf.img_style['size'] = 0
+        leaf.img_style['hz_line_width'] = 0
+        
     return
 
 def toggle_highlight_node(node, prev_highlighted):
@@ -57,7 +68,6 @@ def toggle_highlight_node(node, prev_highlighted):
         node.img_style['hz_line_width'] = 4
 
     node.highlighted = not prev_highlighted
-    print(node.highlighted)
     
     return
 
@@ -153,6 +163,6 @@ actions = NodeActions()
 actions.add_action('Change style', show_action_change_style, run_action_change_style)
 # actions.add_action('Delete node', show_action_delete_node, run_action_delete_node)
 actions.add_action('Show differences', show_action_diff, run_action_diff)
-
+actions.add_action('Clear highlight', show_action_clear_highlight, run_clear_highlight)
 
 start_server(node_actions=actions, tree_style=ts, host="localhost", port=8989)

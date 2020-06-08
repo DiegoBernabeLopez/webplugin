@@ -29,11 +29,11 @@ def show_action_diff(node):
 ##
 # Run actions
 
-def run_action_root(tree, node):
+def run_action_root(tree, node, diff):
     tree.set_outgroup(node)
     return
 
-def run_action_diff(tree, node):
+def run_action_diff(tree, node, diff):
     # Clean background
     for leaf in tree.iter_leaves():
         leaf.img_style['bgcolor'] = 'white'
@@ -42,13 +42,13 @@ def run_action_diff(tree, node):
 
     for leaf in node.iter_leaves():
         attrib = getattr(leaf, 'name')
-        if attrib in node.diffdict['diff']:
+        if attrib in diff:
             leaf.img_style['bgcolor'] = 'pink'
             leaf.img_style['size'] = 8
             leaf.img_style['hz_line_width'] = 4
     return
 
-def run_clear_highlight(tree, node):
+def run_clear_highlight(tree, node, diff):
     for leaf in tree.iter_leaves():
         leaf.img_style['bgcolor'] = 'white'
         leaf.img_style['size'] = 0
@@ -71,7 +71,7 @@ def toggle_highlight_node(node, prev_highlighted):
     
     return
 
-def run_action_highlight(tree, node):
+def run_action_highlight(tree, node, diff):
 
     if not "highlighted" in node.features:
         node.add_feature("highlighted", False)
@@ -87,14 +87,14 @@ def run_action_highlight(tree, node):
         
     return
 
-def run_action_change_style(tree, node):
+def run_action_change_style(tree, node, diff):
     if tree.tree_style == ts:
         tree.tree_style = ts2
     else:
         tree.tree_style = ts
     return
         
-def run_action_delete_node(tree, node):
+def run_action_delete_node(tree, node, diff):
     parent = node.up
     remove_node = node.detach()
     

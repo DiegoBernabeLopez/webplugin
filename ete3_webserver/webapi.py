@@ -144,10 +144,11 @@ def run_action():
     nodeid = source_dict.get('nodeid', '').strip()
     faceid = source_dict.get('faceid', '').strip()
     aindex = source_dict.get('aindex', '').strip()
+    side = source_dict.get('side', '').strip()
 
     if treeid and nodeid and aindex:
         h = LOADED_TREES[treeid]
-        h.run_action(aindex, nodeid)
+        h.run_action(aindex, nodeid, side)
         img = h.redraw()
 
     return web_return(img, response)

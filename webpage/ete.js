@@ -51,14 +51,14 @@ function run_action(treeid1, treeid2, nodeid1, nodeid2, faceid, aindex){
   
   clear_elements();
     
-  var params = {"treeid": treeid1, "nodeid": nodeid1, "faceid": faceid, "aindex": aindex};
+  var params = {"treeid": treeid1, "nodeid": nodeid1, "side" : "source", "faceid": faceid, "aindex": aindex};
   $('#'+treeid1).load(ete_webplugin_URL+'/run_action', params,
     function() {
       console.log('run action');
             $('#'+treeid1).fadeTo(0, 1);
   });
     
-  var params = {"treeid": treeid2, "nodeid": nodeid2, "faceid": faceid, "aindex": aindex};
+  var params = {"treeid": treeid2, "nodeid": nodeid1, "side" : "target", "faceid": faceid, "aindex": aindex};
   $('#'+treeid2).load(ete_webplugin_URL+'/run_action', params,
     function() {
       console.log('run action');

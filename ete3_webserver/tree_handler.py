@@ -123,9 +123,18 @@ class WebTreeHandler(object):
         return action_list
 
     def run_action(self, aindex, nodeid, side = 'source'):
-        source = self.tree.search_nodes(_nid=int(nodeid))[0]
+        if side == 'source':
+            node = self.tree.search_nodes(_nid=int(nodeid))[0]
+            diff = node.diffdict['diff']
+        elif side == 'target':
+            nodeid = self.diffdict['target'].diffdict['nodes'][int(nodeid)]['target_nodeid']
+            node = self.tree.search_nodes(_nid=int(nodeid))[0]
+            diff = self.diffdict['target'].diffdict['nodes'][int(nodeid)]['diff']
+        else: 
+            node = None
+            diff = None
         run_fn = self.tree.actions.actions[aindex][2]
-        return run_fn(self.tree, source)
+        return run_fn(self.tree, node, diff)
     
 class NodeActions(object):
     def __str__(self):

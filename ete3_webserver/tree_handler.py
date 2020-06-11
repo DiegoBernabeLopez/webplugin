@@ -123,7 +123,7 @@ class WebTreeHandler(object):
         return action_list
 
     def run_action(self, aindex, nodeid, side = 'source'):
-        log.info('run_server')
+
         if side == 'source':
             node = self.tree.search_nodes(_nid=int(nodeid))[0]
             diff = node.diffdict['diff']

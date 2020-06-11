@@ -45,7 +45,7 @@ class WebTreeHandler(object):
             n.diffdict = {'target_nodeid' : -1, 'distance' : None, 'side1' : None, 'side2' : None, 'diff' : set()}
             self.diffdict['nodes'][n._nid] = {'target_nodeid' : -1, 'distance' : None, 'side1' : None, 'side2' : None, 'diff' : set()}
 
-    def diff(self, ht, attr1 = 'name', attr2 = 'name', dist_fn=EUCL_DIST_B_FULL, reduce_matrix=False,extended=False, jobs=1):
+    def diff(self, ht, attr1 = 'name', attr2 = 'name', dist_fn=EUCL_DIST, reduce_matrix=False,extended=False, jobs=1):
 
         result = treediff(self.tree, ht.tree, attr1 = 'name', attr2 = 'name', dist_fn=dist_fn, reduce_matrix=False,extended=False, jobs=1)
         
@@ -123,13 +123,14 @@ class WebTreeHandler(object):
         return action_list
 
     def run_action(self, aindex, nodeid, side = 'source'):
+        log.info('run_server')
         if side == 'source':
             node = self.tree.search_nodes(_nid=int(nodeid))[0]
             diff = node.diffdict['diff']
         elif side == 'target':
             nodeid = self.diffdict['target'].diffdict['nodes'][int(nodeid)]['target_nodeid']
             node = self.tree.search_nodes(_nid=int(nodeid))[0]
-            diff = self.diffdict['target'].diffdict['nodes'][int(nodeid)]['diff']
+            diff = self.diffdict['nodes'][int(nodeid)]['diff']
         else: 
             node = None
             diff = None

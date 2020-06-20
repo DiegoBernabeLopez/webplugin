@@ -37,23 +37,30 @@ function get_tree_diff(newick1, recipient1, newick2, recipient2){
   var params = {'newick1':newick1, 'treeid1':treeid1,'newick2':newick2, 'treeid2':treeid2};
 
     
-  $.post(ete_webplugin_URL+'/load_trees', params);
+  $.post(ete_webplugin_URL+'/load_trees', params ,
+      function(e) {
+      $('#server_status').html(loading_img);
+        
+      // Draw trees
+      var params = {"treeid": treeid1};
+      $('#'+treeid1).load(ete_webplugin_URL+'/draw_tree', params,
+        function() {
+                $('#'+treeid1).fadeTo(0, 0.0);
+                $('#'+treeid1).fadeTo(1000, 1);
+      });
+
+      var params = {"treeid": treeid2};
+      $('#'+treeid2).load(ete_webplugin_URL+'/draw_tree', params,
+        function() {
+                $('#'+treeid2).fadeTo(0, 0.0);
+                $('#'+treeid2).fadeTo(1000, 1);
+      });        
+        
+
+  });
 
     
-  // Draw trees
-  var params = {"treeid": treeid1};
-  $('#'+treeid1).load(ete_webplugin_URL+'/draw_tree', params,
-    function() {
-            $('#'+treeid1).fadeTo(0, 0.0);
-            $('#'+treeid1).fadeTo(1000, 1);
-  });
-    
-  var params = {"treeid": treeid2};
-  $('#'+treeid2).load(ete_webplugin_URL+'/draw_tree', params,
-    function() {
-            $('#'+treeid2).fadeTo(0, 0.0);
-            $('#'+treeid2).fadeTo(1000, 1);
-  });
+
 }
 
 

@@ -142,6 +142,8 @@ def load_trees():
     # do ete diff stuff
     h1.diff(h2)
     h2.diff(h1)
+    
+    return web_return('', response)
 
 @post('/draw_tree')
 def draw_tree():

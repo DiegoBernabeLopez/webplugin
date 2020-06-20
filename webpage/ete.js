@@ -39,7 +39,6 @@ function get_tree_diff(newick1, recipient1, newick2, recipient2){
     
   $.post(ete_webplugin_URL+'/load_trees', params ,
       function(e) {
-      $('#server_status').html(loading_img);
         
       // Draw trees
       var params = {"treeid": treeid1};

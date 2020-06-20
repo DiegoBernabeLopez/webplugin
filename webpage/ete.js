@@ -3,6 +3,12 @@ var ete_webplugin_URL = "http://localhost:8989";
 var loading_img = '<img border=0 src="loader.gif">';
 
 function update_server_status(){
+  /**
+  Updates server status
+  
+  Parameters:
+    None
+  */
   console.log('updating');
   $('#server_status').load(ete_webplugin_URL+"/status");
 
@@ -10,6 +16,15 @@ function update_server_status(){
 
 
 function get_tree_diff(newick1, recipient1, newick2, recipient2){
+  /**
+  Generates trees and tree images
+  
+  Parameters:
+    newick1: text representation of tree
+    recipient1: tag of the element where the tree image reconstructed from newick1 information will be displayed
+    newick2: text representation of tree
+    recipient2: tag of the element where the tree image reconstructed from newick2 information will be displayed
+  */
   clear_all();
     
   var treeid1 = makeid();
@@ -44,6 +59,17 @@ function get_tree_diff(newick1, recipient1, newick2, recipient2){
 
 
 function run_action(treeid1, treeid2, nodeid1, nodeid2, faceid, aindex){
+  /**
+  Runs action on both trees and updates their images and updates server status
+  
+  Parameters:
+    treeid1: source tree id
+    treeid2: target tree id
+    nodeid1: selected source node id
+    nodeid2: target node id linked to nodeid1
+    faceid: face id
+    aindex: action index
+  */
   $("#popup").hide();
   $("#popup2").hide(); 
   $('#server_status').html(loading_img);
@@ -70,6 +96,14 @@ function run_action(treeid1, treeid2, nodeid1, nodeid2, faceid, aindex){
 
 
 function show_actions(treeid, nodeid, faceid){
+  /**
+  Shows available actions for selected node
+  
+  Parameters:
+    treeid: source tree id
+    nodeid: selected source node id
+    faceid: face id
+  */
   $("#popup").html(loading_img);
   
   var params = {"treeid": treeid, "nodeid": nodeid, "faceid": faceid};
@@ -78,6 +112,12 @@ function show_actions(treeid, nodeid, faceid){
 
 
 function bind_popup(){
+  /**
+  Binds popup to tree image
+  
+  Parameters:
+    None
+  */
 
 
     var onmousestop = function (e){
@@ -117,16 +157,47 @@ function bind_popup(){
 }
 
 function hide_popup(){
+  /**
+  Hides popup
+  
+  Parameters:
+    None
+  */
   $('#popup').hide();
 }
 
 function hide_diff(){
+  /**
+  Hides popup2
+  
+  Parameters:
+    None
+  */
   $('#popup2').hide();
 }
 
 
 
 function highlight_node(treeid1, treeid2, nodeid1, nodeid2, faceid, x1, y1, width1, height1, x2, y2, width2, height2, dist){
+  /**
+  highlights hovered node and matching node with a square box
+  
+  Parameters:
+    treeid1: source tree id
+    treeid2: target tree id
+    nodeid1: selected source node id
+    nodeid2: target node id linked to nodeid1
+    faceid: face id
+    x1: x origin of the first higlighting box
+    y1: y origin of the first higlighting box
+    width1: width of the first higlighting box
+    height1: height of the first higlighting box
+    x2: x origin of the second higlighting box
+    y2: y origin of the second higlighting box
+    width2: width of the second higlighting box
+    height2: height of the second higlighting box
+    dist: distance between selected nodes
+  */
 
     console.log(treeid1, treeid2, nodeid1, nodeid2, faceid, x1, y1, width1, height1, x2, y2, width2, height2, dist);
     var img1 = $('#'+treeid1);
@@ -163,6 +234,12 @@ function highlight_node(treeid1, treeid2, nodeid1, nodeid2, faceid, x1, y1, widt
 
 }
 function unhighlight_node(){
+  /**
+  Hides highlighters
+  
+  Parameters:
+    None
+  */
   console.log("unhighlight");
   $("#highlighter1").hide();
   $("#highlighter2").hide();
@@ -180,6 +257,12 @@ function makeid()
 }
 
 function clear_all(){
+  /**
+  Clears popup, popup2, highlighter1, highlighter2 and tree images
+  
+  Parameters:
+    None
+  */
     hide_popup();
     hide_diff();
     unhighlight_node();
@@ -187,6 +270,12 @@ function clear_all(){
 }
 
 function clear_elements(){
+  /**
+  Clears popup, popup2, highlighter1, highlighter2
+  
+  Parameters:
+    None
+  */
     hide_popup();
     hide_diff();
     unhighlight_node();
@@ -194,6 +283,12 @@ function clear_elements(){
 
 
 $(document).ready(function(){
+  /**
+  Clears popup, popup2 and updates server status
+  
+  Parameters:
+    None
+  */
   hide_popup();
   hide_diff();
   update_server_status();

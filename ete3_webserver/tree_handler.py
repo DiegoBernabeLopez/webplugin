@@ -7,6 +7,16 @@ from ete3.parser.newick import NewickError
 from ete3.tools.ete_diff import *
 
 def timeit(f):
+    '''
+    Calculates the elapsed time taken by a function decarated
+
+
+    Parameters:
+        f: function to measure
+
+    Returns:
+        float: elapsed time
+    '''
     def a_wrapper_accepting_arguments(*args, **kargs):
         t1 = time.time()
         r = f(*args, **kargs)
@@ -20,6 +30,9 @@ def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
 
 
 class WebTreeHandler(object):
+    '''
+    Tree object handler
+    '''
     def __init__(self, newick, alg, tid, actions, style, predraw_fn=None):
         try:
             self.tree = PhyloTree(newick = newick, alignment = alg, alg_format="fasta")            
@@ -45,9 +58,29 @@ class WebTreeHandler(object):
             n.diffdict = {'target_nodeid' : -1, 'distance' : None, 'side1' : None, 'side2' : None, 'diff' : set()}
             self.diffdict['nodes'][n._nid] = {'target_nodeid' : -1, 'distance' : None, 'side1' : None, 'side2' : None, 'diff' : set()}
 
-    def diff(self, ht, attr1 = 'name', attr2 = 'name', dist_fn=EUCL_DIST, reduce_matrix=False,extended=False, jobs=1):
+    def diff(self, ht, attr1 = 'name', attr2 = 'name', dist_fn=EUCL_DIST, support=None, reduce_matrix=False, extended=False, jobs=1, parallel=None):
+        '''
+        Calculates treediff for self handler and a target tree and loads the data into handler properties
 
-        result = treediff(self.tree, ht.tree, attr1 = 'name', attr2 = 'name', dist_fn=dist_fn, reduce_matrix=False,extended=False, jobs=1)
+        Parameters:
+            self: self handler
+            ht: target tree handler, as tree handler object
+            attr1: observed attribute for the reference node, as string
+            attr2: observed attribute for the target node, as string
+            dist_fn: distance function that will be used to calculate the distances between nodes, as python function
+            support: whether to use support values for the different calculations, as boolean
+            reduce_matrix: whether to reduce the distances matrix removing columns and rows where observations equal to 0 (perfect matches) are found, as boolean
+            extended: whether to use an extension function, as python function
+            jobs: maximum number of parallel jobs to use if parallel argument is given, as integer
+            parallel: parallelization method, as string. Options are:
+                async for asyncronous parallelization
+                sync for asyncronous parallelization
+
+        Returns:
+            None
+        '''
+
+        result = treediff(self.tree, ht.tree, attr1 = attr1, attr2 = attr2, dist_fn=dist_fn, support=support, reduce_matrix=reduce_matrix, extended=extended, jobs=jobs)
         
         self.diffdict['target'] = ht
         
@@ -66,6 +99,15 @@ class WebTreeHandler(object):
             
                     
     def redraw(self):
+        '''
+        Generates the html tree image and related information
+
+        Parameters:
+            self: self handler
+
+        Returns:
+            html text: Tree image and related information
+        '''
         base64_img, img_map = self.tree.render("%%return.PNG", tree_style=self.tree.tree_style)
         _, target_map = self.diffdict['target'].tree.render("%%return.PNG", tree_style=self.tree.tree_style)
         base64_img = base64_img.data().decode("utf-8")
@@ -79,6 +121,17 @@ class WebTreeHandler(object):
         return html_map+ '<div id="%s" >'%tree_div_id + html_img + ete_link + "</div>"
 
     def get_html_map(self, img_map, target_map):
+        '''
+        Generates the html tree map
+
+        Parameters:
+            self: self handler
+            img_map: self tree image map from tree.render
+            target_map: target tree image map from tree.render
+
+        Returns:
+            html: html map for self tree image web representation
+        '''
         
         html_map = '<MAP NAME="%s" class="ete_tree_img">' %(self.mapid)
         if img_map["nodes"]:
@@ -115,6 +168,16 @@ class WebTreeHandler(object):
         return html_map
 
     def get_avail_actions(self, nodeid):
+        '''
+        Fetches available actions to apply on try
+
+        Parameters:
+            self: self handler
+            nodeid: selected node id
+
+        Returns:
+            list: action list
+        '''
         target = self.tree.search_nodes(_nid=int(nodeid))[0]
         action_list = []
         for aindex, aname, show_fn, run_fn in self.tree.actions:
@@ -138,6 +201,9 @@ class WebTreeHandler(object):
         return run_fn(self.tree, node, diff)
     
 class NodeActions(object):
+    '''
+    Actions handler
+    '''
     def __str__(self):
         text = []
         for aindex, aname, show_fn, run_fn in self:
@@ -152,8 +218,29 @@ class NodeActions(object):
         self.actions = {}
 
     def clear_default_actions(self):
+        '''
+        Clears all actions
+
+        Parameters:
+            self: self handler
+
+        Returns:
+            None
+        '''
         self.actions = {}
 
     def add_action(self, action_name, show_fn, run_fn):
+        '''
+        Adds an action to the actions handler object
+
+        Parameters:
+            self: self handler
+            action_name: action name, as string
+            show_fn: function used to show the action, as function
+            run_fn: function used when running the action, as function
+
+        Returns:
+            None
+        '''
         aindex = "act_"+id_generator()
         self.actions[aindex] = [action_name, show_fn, run_fn]

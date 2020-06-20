@@ -14,6 +14,16 @@ COMPRESS_MIN_BYTES = 10000
 TREE_HANDLER = WebTreeHandler
 
 def web_return(html, response):
+    '''
+    Generates the web return information
+
+    Parameters:
+        html: html code
+        response: response code
+
+    Returns:
+        html: information to be returned
+    '''
     if COMPRESS_DATA and len(html) >= COMPRESS_MIN_BYTES:
         chtmlF = BytesIO()
         z = gzip.GzipFile(fileobj=chtmlF, mode='w')
@@ -29,9 +39,19 @@ def web_return(html, response):
         log.info('returning %0.3f KB' %(len(html)/1024.))
     return html
 
-# THESE ARE THE WEB SERVICES PROVIDING DATA TO THE WEB AND API
+
+# WEB SERVICES PROVIDING DATA TO THE WEB AND API
 @error(405)
 def method_not_allowed(res):
+    '''
+    Generates the web return information
+
+    Parameters:
+        res: resource
+
+    Returns:
+        error code
+    '''
     if request.method == 'OPTIONS':
         new_res = HTTPResponse()
         new_res.headers['Access-Control-Allow-Origin'] = '*'
@@ -43,16 +63,43 @@ def method_not_allowed(res):
 
 @hook('after_request')
 def enable_cors():
+    '''
+    Enables cross-origin resource sharing
+
+    Parameters:
+        None
+
+    Returns:
+        None
+    '''
     response.headers['Access-Control-Allow-Origin'] = '*'
     response.headers['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS, PUT'
     response.headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept'
 
 @route('/')
 def index():
-    return static_file("index.html", root='/var/www/etediff.ddns.net')
+    '''
+    Returns index page when no subdomain is introduced
+
+    Parameters:
+        None
+
+    Returns:
+        Index document
+    '''
+    return static_file("index.html", root='/home/diego/www/')
 
 @route('/status')
 def server_status():
+    '''
+    Returns "alive" as webreturn
+
+    Parameters:
+        None
+
+    Returns:
+        html
+    '''
     return web_return('alive', response)
 
 
@@ -98,6 +145,15 @@ def load_trees():
 
 @post('/draw_tree')
 def draw_tree():
+    '''
+    Generates tree image as web return
+
+    Parameters:
+        None
+
+    Returns:
+        html: web return containing tree image and response
+    '''
     if request.json:
         source_dict = request.json
     else:
@@ -113,6 +169,15 @@ def draw_tree():
 
 @post('/get_actions')
 def get_action():
+    '''
+    Generates available actions text as web return
+
+    Parameters:
+        None
+
+    Returns:
+        html: web return containing available actions and response
+    '''
     if request.json:
         source_dict = request.json
     else:
@@ -135,6 +200,15 @@ def get_action():
 
 @post('/run_action')
 def run_action():
+    '''
+    Generates runs actions and generates response as web return
+
+    Parameters:
+        None
+
+    Returns:
+        html: web return containing tree image and response
+    '''
     if request.json:
         source_dict = request.json
     else:
@@ -155,6 +229,15 @@ def run_action():
 
 @post('/get_dist')
 def get_dist():
+    '''
+    Access tree handler information and fetches distance between selected node and matched node
+
+    Parameters:
+        None
+
+    Returns:
+        html: web return containing distance text and response
+    '''
     if request.json:
         source_dict = request.json
     else:
@@ -173,71 +256,21 @@ DEFAULT_ACTIONS = None
 DEFAULT_STYLE = None
 PREDRAW_FN = None
 
-# @post('/color_nodes')
-# def color_nodes():
-#     if request.json:
-#         source_dict = request.json
-#     else:
-#         source_dict = request.POST
-        
-#     treeid1 = source_dict.get('treeid1', '').strip()
-#     nodeid1 = source_dict.get('nodeid1', '').strip()
-#     nodeid2 = source_dict.get('nodeid2', '').strip()
-#     side = source_dict.get('side', '').strip()
-    
-    
-#     if side == 'source':
-#         if treeid1 and nodeid1 and nodeid2:
-#             h = LOADED_TREES[treeid1]
-
-#             source = h.tree.search_nodes(_nid=int(nodeid1))[0]
-
-#             # Clean background
-#             for leaf in h.tree.iter_leaves():
-#                 leaf.img_style['bgcolor'] = 'white'
-#                 leaf.img_style['size'] = 0
-#                 leaf.img_style['hz_line_width'] = 0
-
-#             # Paint background
-#             for leaf in source.iter_leaves():
-#                 attrib = getattr(leaf, 'name')
-#                 if attrib in h.diffdict['nodes'][int(nodeid1)]['diff'] and h.diffdict['nodes'][int(nodeid1)]['distance'] < 1.0:
-#                     leaf.img_style['bgcolor'] = 'pink'
-#                     leaf.img_style['size'] = 8
-#                     leaf.img_style['hz_line_width'] = 4
-
-#             img = h.redraw()
-            
-#     elif side == 'target':
-#         if treeid1 and nodeid1 and nodeid2:
-#             h1 = LOADED_TREES[treeid1]
-#             h2 = h1.diffdict['target']
-
-#             source = h1.tree.search_nodes(_nid=int(nodeid1))[0]
-#             target = h2.tree.search_nodes(_nid=int(nodeid2))[0]
-
-#             # Clean background
-#             for leaf in h2.tree.iter_leaves():
-#                 leaf.img_style['bgcolor'] = 'white'
-#                 leaf.img_style['size'] = 0
-#                 leaf.img_style['hz_line_width'] = 0
-
-#             # Paint background
-#             for leaf in target.iter_leaves():
-#                 attrib = getattr(leaf, 'name')
-#                 if attrib in h1.diffdict['nodes'][int(nodeid1)]['diff']  and h1.diffdict['nodes'][int(nodeid1)]['distance'] < 1.0:
-#                     leaf.img_style['bgcolor'] = 'pink'
-#                     leaf.img_style['size'] = 8
-#                     leaf.img_style['hz_line_width'] = 4
-
-#             img = h2.redraw()
-
-#     return web_return(img, response)
-
-
-
 
 def start_server(node_actions=None, tree_style=None, predraw_fn=None, host="localhost", port=8989):
+    '''
+    Starts server
+
+    Parameters:
+        node_actions: Node actions handler object
+        tree_style: Tree style, as function
+        predraw_fn: wether to use tree predraw
+        host: host ip
+        port: listening port
+
+    Returns:
+        None
+    '''
     global DEFAULT_STYLE, DEFAULT_ACTIONS, PREDRAW_FN
     
     

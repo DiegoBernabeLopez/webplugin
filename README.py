@@ -1,24 +1,25 @@
 ### Dependencies
 
-- ete3 from github (master branch)
+- 
+- ete3 from github (master branch when implemented)
 
 ```
+pip install bottle
+
+pip install git+https://github.com/DiegoBernabeLopez/ete.git
+
+or (when implemented)
 pip install https://github.com/etetoolkit/ete/archive/master.zip
-pip install bottle cherrypy
+    
 ```
 
 ### Demo
 - To run the demo:
 
 ```
-python test_phylotastic.py
+python run_server.py
 ```
 
-- open ``demo/webplugin_example.html` in a browser running in the machine as the test script.
-
-
-##Customized layout:
-    basic_layout.py: basic layout for general projects
-    spongilla_layout.py: custom layout for spongilla project
+- open ``webpage/index.html` in a browser running in the same machine as the test script.
 
 

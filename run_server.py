@@ -22,6 +22,7 @@ def run_action_root(tree, node, diff):
     return
 
 def run_action_diff(tree, node, diff):
+
     # Clean background
     tree.img_style['bgcolor'] = 'white'
     tree.img_style['size'] = 0
@@ -33,20 +34,21 @@ def run_action_diff(tree, node, diff):
         treenode.img_style['hz_line_width'] = 0
         
     #highlight selection and their differences
-    node.img_style['bgcolor'] = 'aqua'
-    node.img_style['size'] = 8
-    node.img_style['hz_line_width'] = 4
+    if node.diffdict['distance'] < 1:        
+        node.img_style['bgcolor'] = 'aqua'
+        node.img_style['size'] = 8
+        node.img_style['hz_line_width'] = 4
 
-    for leaf in node.traverse():
-        attrib = getattr(leaf, 'name')
-        if attrib in diff:
-            leaf.img_style['bgcolor'] = 'pink'
-            leaf.img_style['size'] = 8
-            leaf.img_style['hz_line_width'] = 4
-        else:
-            leaf.img_style['bgcolor'] = 'aqua'
-            leaf.img_style['size'] = 8
-            leaf.img_style['hz_line_width'] = 4            
+        for leaf in node.traverse():
+            attrib = getattr(leaf, 'name')
+            if attrib in diff:
+                leaf.img_style['bgcolor'] = 'pink'
+                leaf.img_style['size'] = 8
+                leaf.img_style['hz_line_width'] = 4
+            else:
+                leaf.img_style['bgcolor'] = 'aqua'
+                leaf.img_style['size'] = 8
+                leaf.img_style['hz_line_width'] = 4            
     return
 
 def run_clear_highlight(tree, node, diff):

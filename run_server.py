@@ -27,17 +27,17 @@ def run_action_diff(tree, node, diff):
     tree.img_style['size'] = 0
     tree.img_style['hz_line_width'] = 0
     
-    for leaf in tree.iter_leaves():
-        leaf.img_style['bgcolor'] = 'white'
-        leaf.img_style['size'] = 0
-        leaf.img_style['hz_line_width'] = 0
+    for treenode in tree.traverse():
+        treenode.img_style['bgcolor'] = 'white'
+        treenode.img_style['size'] = 0
+        treenode.img_style['hz_line_width'] = 0
         
     #highlight selection and their differences
     node.img_style['bgcolor'] = 'aqua'
     node.img_style['size'] = 8
     node.img_style['hz_line_width'] = 4
 
-    for leaf in node.iter_leaves():
+    for leaf in node.traverse():
         attrib = getattr(leaf, 'name')
         if attrib in diff:
             leaf.img_style['bgcolor'] = 'pink'

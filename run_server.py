@@ -23,6 +23,10 @@ def run_action_root(tree, node, diff):
 
 def run_action_diff(tree, node, diff):
     # Clean background
+    tree.img_style['bgcolor'] = 'white'
+    tree.img_style['size'] = 0
+    tree.img_style['hz_line_width'] = 0
+    
     for leaf in tree.iter_leaves():
         leaf.img_style['bgcolor'] = 'white'
         leaf.img_style['size'] = 0

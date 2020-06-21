@@ -27,6 +27,11 @@ def run_action_diff(tree, node, diff):
         leaf.img_style['bgcolor'] = 'white'
         leaf.img_style['size'] = 0
         leaf.img_style['hz_line_width'] = 0
+        
+    #highlight selection and their differences
+    node.img_style['bgcolor'] = 'aqua'
+    node.img_style['size'] = 8
+    node.img_style['hz_line_width'] = 4
 
     for leaf in node.iter_leaves():
         attrib = getattr(leaf, 'name')
@@ -34,6 +39,10 @@ def run_action_diff(tree, node, diff):
             leaf.img_style['bgcolor'] = 'pink'
             leaf.img_style['size'] = 8
             leaf.img_style['hz_line_width'] = 4
+        else:
+            leaf.img_style['bgcolor'] = 'aqua'
+            leaf.img_style['size'] = 8
+            leaf.img_style['hz_line_width'] = 4            
     return
 
 def run_clear_highlight(tree, node, diff):

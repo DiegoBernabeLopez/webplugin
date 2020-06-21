@@ -206,33 +206,38 @@ function highlight_node(treeid1, treeid2, nodeid1, nodeid2, faceid, x1, y1, widt
   */
 
     console.log(treeid1, treeid2, nodeid1, nodeid2, faceid, x1, y1, width1, height1, x2, y2, width2, height2, dist);
-    var img1 = $('#'+treeid1);
-    var offset1 = img1.offset();
-    console.log(img1);
-    console.log(offset1);
+    if (dist < 1){
+        var img1 = $('#'+treeid1);
+        var offset1 = img1.offset();
+        console.log(img1);
+        console.log(offset1);
 
-    $("#highlighter1").show();
-    $("#highlighter1").css("visibility", 'visible');
-    $("#highlighter1").css("top", offset1.top+y1-1);
-    $("#highlighter1").css("left", offset1.left+x1-1);
-    $("#highlighter1").css("width", width1+1);
-    $("#highlighter1").css("height", height1+1);
+        $("#highlighter1").show();
+        $("#highlighter1").css("visibility", 'visible');
+        $("#highlighter1").css("top", offset1.top+y1-1);
+        $("#highlighter1").css("left", offset1.left+x1-1);
+        $("#highlighter1").css("width", width1+1);
+        $("#highlighter1").css("height", height1+1);
 
-    var img2 = $('#'+treeid2);
-    var offset2 = img2.offset();
-    console.log(img2);
-    console.log(offset2);
+        var img2 = $('#'+treeid2);
+        var offset2 = img2.offset();
+        console.log(img2);
+        console.log(offset2);
 
-    $("#highlighter2").show();
-    $("#highlighter2").css("visibility", 'visible');
-    $("#highlighter2").css("top", offset2.top+y2-1);
-    $("#highlighter2").css("left", offset2.left+x2-1);
-    $("#highlighter2").css("width", width2+1);
-    $("#highlighter2").css("height", height2+1);
+        $("#highlighter2").show();
+        $("#highlighter2").css("visibility", 'visible');
+        $("#highlighter2").css("top", offset2.top+y2-1);
+        $("#highlighter2").css("left", offset2.left+x2-1);
+        $("#highlighter2").css("width", width2+1);
+        $("#highlighter2").css("height", height2+1);
 
 
-    var params = {"treeid": treeid1, "nodeid": nodeid1};
-    $('#popup2').load(ete_webplugin_URL+'/get_dist', params);
+        var params = {"treeid": treeid1, "nodeid": nodeid1};
+        $('#popup2').load(ete_webplugin_URL+'/get_dist', params);
+    } else {
+        
+        unhighlight_node();
+    }
 
     hide_popup();
 

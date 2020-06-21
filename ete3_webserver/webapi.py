@@ -87,7 +87,7 @@ def index():
     Returns:
         Index document
     '''
-    return static_file("index.html", root='/home/diego/www/')
+    return static_file("index.html", root='/home/diego/www')
 
 @route('/status')
 def server_status():
